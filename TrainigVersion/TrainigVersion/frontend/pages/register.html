@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrierung — CyberSpace NIS2</title>
+  <link rel="stylesheet" href="../css/design-system.css">
+</head>
+<body>
+
+  <div class="auth-container">
+    <div class="auth-card">
+
+      <!-- Grüner Header (wie Mock-Up Slide 2) -->
+      <div class="auth-card__header auth-card__header--green">
+        <h1 class="auth-card__title">Registrierung</h1>
+      </div>
+
+      <div class="auth-card__body">
+
+        <!-- Meldungen -->
+        <div id="alertSuccess" class="alert alert--success" role="alert">
+          Registrierung erfolgreich! Sie werden weitergeleitet...
+        </div>
+        <div id="alertError" class="alert alert--danger" role="alert">
+          <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+        </div>
+
+        <!-- Formular (4 Felder wie Mock-Up) -->
+        <form id="registerForm" novalidate>
+
+          <!-- Vorname -->
+          <div class="form-group">
+            <label for="vorname">Vorname *</label>
+            <input type="text" id="vorname" name="vorname" class="form-control"
+                   placeholder="Max" required minlength="2" maxlength="50"
+                   autocomplete="given-name">
+            <div class="invalid-feedback" id="vornameError">Bitte geben Sie Ihren Vornamen ein (min. 2 Zeichen).</div>
+          </div>
+
+          <!-- Nachname -->
+          <div class="form-group">
+            <label for="nachname">Nachname *</label>
+            <input type="text" id="nachname" name="nachname" class="form-control"
+                   placeholder="Mustermann" required minlength="2" maxlength="50"
+                   autocomplete="family-name">
+            <div class="invalid-feedback" id="nachnameError">Bitte geben Sie Ihren Nachnamen ein (min. 2 Zeichen).</div>
+          </div>
+
+          <!-- E-Mail -->
+          <div class="form-group">
+            <label for="email">E-Mail *</label>
+            <input type="email" id="email" name="email" class="form-control"
+                   placeholder="max.mustermann@example.com" required
+                   autocomplete="email">
+            <div class="invalid-feedback" id="emailError">Bitte geben Sie eine gültige E-Mail-Adresse ein.</div>
+          </div>
+
+          <!-- Passwort -->
+          <div class="form-group">
+            <label for="passwort">Passwort *</label>
+            <input type="password" id="passwort" name="passwort" class="form-control"
+                   placeholder="Min. 8 Zeichen" required minlength="8"
+                   autocomplete="new-password">
+            <div class="invalid-feedback" id="passwortError">Min. 8 Zeichen, 1 Großbuchstabe, 1 Zahl, 1 Sonderzeichen.</div>
+            <!-- Passwort-Stärke (SCRUM-71) -->
+            <div class="password-strength">
+              <div class="password-strength__bar">
+                <div class="password-strength__fill" id="strengthFill"></div>
+              </div>
+              <span class="password-strength__text" id="strengthText"></span>
+            </div>
+          </div>
+
+          <!-- Submit Button (grün, zentriert wie Mock-Up) -->
+          <button type="submit" class="btn btn--green btn--center" id="submitBtn">
+            Registrieren
+          </button>
+
+        </form>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="auth-footer">
+        <a href="login.html">Bereits registriert? → Login</a>
+      </div>
+
+      <!-- Info Text -->
+      <div class="auth-info">
+        💡 Alle neuen Benutzer starten als SPIELER
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../js/validation.js"></script>
+  <script src="../js/register.js"></script>
+</body>
+</html>
