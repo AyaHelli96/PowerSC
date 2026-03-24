@@ -1,0 +1,306 @@
+﻿@startuml
+' Layout & Stil
+
+hide empty methods
+
+
+legend right
+<<RichType>>: Stark typisierte Primitive
+<<ValueObject>>: Value Objects
+<<entity>>: Persistente Entität
+<<enum>>: Aufzählung
+endlegend
+'------shared----
+package "Shared\n(RichTypes · ValueObjects · Enums)" as P_Shared #fdf5e6 {
+  class SperreInfo <<(V,#CCEEFF) ValueObject >> {
+    +FehlgeschlagenLogin : int <<nn>>
+    +GesperrtBis : DateTime
+  }
+  class RollenFarbe << (V,#CCEEFF) ValueObject >> {
+      +Farbe : string <<nn>>
+      +FarbeHex : FarbeHex <<nn>>
+    }
+   '-----RichType---
+  class Email <<(R,#FFEECC) RichType>> {
+       +Value : string <<nn>>
+     }
+   class Password <<(R,#FFEECC) RichType>> {
+    +Value : string <<nn>>
+  }
+   class FarbeHex <<(R,#FFEECC) RichType>> {
+      +Value : string <<nn>>
+    }
+     class Nis2Artikel <<(R,#FFEECC) RichType>> {
+        +Value : string <<nn>>
+      }   
+       '-----Enums 10 ---
+        enum Berichtigung <<enum>> {
+           Spieler
+           Moderator
+           Admin
+         }
+         enum SchwierigkeitsGrad <<enum>> {
+             Leicht
+             Mittel
+             Schwer
+           }
+         enum Zielgruppe <<enum>> {
+             Fuehrungskraefte
+             IT_Personal
+             Alle
+           }
+         enum SzenarioStatus <<enum>> {
+              Entwurf
+              Aktiv
+              Archiviert
+            }
+         enum KartenType <<enum>> {
+              Action
+              Reaction
+            }
+         enum ReaktionsType <<enum>> {
+             Positiv
+             Negativ
+             Wiederherstellung
+             Sackgasse
+           }
+         enum SessionStatus <<enum>> {
+             Warten
+             Aktiv
+             Pausiert
+             Beendet
+           }
+         enum SpielerStatus <<enum>> {
+               Aktiv
+               Inaktiv
+               Disconnected
+             }
+         enum EinladungStatus <<enum>> {
+             Neu
+             Akzeptiert
+             Abgelehnt
+           }
+         enum ProtokollAktion <<enum>> {
+             Session erstellt
+             Session gestartet
+             Session pausiert
+             Session fortgesetzt
+             Session beendet
+             Spieler eingeladen
+             Einladung akzeptiert
+             Einladung abgelehnt
+             Spieler beigetreten
+             Spieler verlassen
+             Spieler disconnected
+             Phase gestartet
+             Phase abgeschlossen
+             Karte angezeigt
+             Option gewaehlt
+             Punkte erhalten
+             Punkte verloren
+             Spiel gewonnen
+             Spiel verlieren
+           }
+  }
+  '-----enties-----
+  package "Benutzer\n(TPH Inheritance)" as P_Benutzer #EEE0FF {
+  
+   abstract class Benutzer <<entity>> {
+     +BentzerId : int <<nn>>
+     +Vorname : string <<nn>>
+     +Nachname : string <<nn>>
+     +Email : Email <<nn>> <<unique>>
+     +Password : Password <<nn>>
+     +Berichtigung : Berichtigung <<nn>>
+     +ErstellAm : DateTime <<nn>>
+     +LetzterLogin : DateTime
+     +SperreInfo : SperreInfo
+   }
+   class Spieler <<entity>> {
+       +Statstik : Statstik
+       +SessionTeilnahmen : List<SessionSpieler> <<nn>>
+       +EmpfangeneEinladungen : List<Einladung> <<nn>>
+     }
+   class Moderator <<entity>> {
+       +VerwalteteSessionen : List<Session> <<nn>>
+       +GesendeteEinladungen : List<Einladung> <<nn>>
+     }
+   class Admin <<entity>> {
+       +ErstellteSzenarien : List<Szenario> <<nn>>
+     }
+   
+   class Statstik <<entity>> {
+      +StatstikID : int <<nn>>
+      +AnzahlSpiele : int <<nn>>
+      +AnzahlSiege : int <<nn>>
+      +BestePunkte : int
+      +DurchSchnittPunkte : decimal
+      +GesamtSpielZeit : int
+      +LetzteGespielt : DateTime
+    }
+    }
+   '----package Spiel Entity--
+   package "Spiel                            " as P_Spiel #EFF6EF  {
+     class Szenario <<entity>> {
+       +SzenarioId : int <<nn>>
+       +Titel : string <<nn>>
+       +Beschreibung : string <<nn>>
+       +Nis2Artikel : Nis2Artikel <<nn>>
+       +SchwierigkeitsGrad : SchwierigkeitsGrad <<nn>>
+       +Zielgruppe : Zielgruppe
+       +DauerMin : int
+       +AnzahlPhase : int <<nn>>
+       +ErstellAm : DateTime <<nn>>
+       +GeaendertDatum : DateTime
+       +Status : SzenarioStatus <<nn>>
+       +MaxPunkte : int
+       +ErstelltVon : Admin <<nn>>
+       +Phasen : List<Phase> <<nn>>
+       +SzenarioRollen : List<SzenarioRolle> <<nn>>
+     }
+     class Phase <<entity>> {
+         +PhaseId : int <<nn>>
+         +PhaseNummer : int <<nn>>
+         +Name : string <<nn>>
+         +Beschreibung : string
+         +MinPunlkte : int
+         +Szenario : Szenario <<nn>>
+         +Karten : List<Karte> <<nn>>
+       }
+     class Karte <<entity>> {
+         +KarteId : int <<nn>>
+         +KartenKode : string<<nn>> 
+         +KartenType : KartenType <<nn>>
+         +Titel : string <<nn>>
+         +KartenText : string <<nn>>
+         +ReaktionsType : ReaktionsType
+         +Punkte : int <<nn>>
+         +Phase : Phase <<nn>>
+         +Optionen : List<Option> <<nn>>
+       }
+     class Option <<entity>> {
+         +OptionId : int <<nn>>
+         +OptionBuchstabe : char <<nn>>
+         +IstKorrekt : bool <<nn>>
+         +OptionText : string <<nn>>
+         +Punkte : int <<nn>>
+         +Feedback : string
+         +Karte : Karte <<nn>>
+       }
+     class Rollen <<entity>> {
+           +RolleId : int <<nn>>
+           +Name : string <<nn>> <<unique>>
+           +VollerName : string
+           +Beschreibung : string
+           +RollenFarbe : RollenFarbe
+         }
+     class SzenarioRolle <<entity>> {
+         +Szenario : Szenario <<nn>>
+         +Rolle : Rollen <<nn>>
+       }
+   }
+   '-------Session---
+   package "Session" as P_Session #c1e1EE {
+   class Session <<entity>> {
+       +SessionID : int <<nn>>
+       +Name : string
+       +Status : SessionStatus <<nn>>
+       +AktuellePhase : int <<nn>>
+       +StartZeit : DateTime
+       +EndZeit : DateTime
+       +ErstellAm : DateTime <<nn>>
+       +BeendigungsGrund : string
+       +Szenario : Szenario <<nn>>
+       +Moderator : Moderator <<nn>>
+       +Spieler : List<SessionSpieler> <<nn>>
+       +Einladungen : List<Einladung> <<nn>>
+     }
+     class SessionSpieler <<entity>> {
+         +Punkte : int <<nn>>
+         +Status : SpielerStatus <<nn>>
+         +BeigetretenAm : DateTime
+         +Session : Session <<nn>>
+         +Spieler : Spieler <<nn>>
+         +Rolle : Rollen <<nn>>
+       }
+     class Einladung <<entity>> {
+         +EinladungID : int <<nn>>
+         +Status : EinladungStatus <<nn>>
+         +Nachricht : string
+         +ErstellAm : DateTime <<nn>>
+         +BeantwortTime : DateTime
+         +Session : Session <<nn>>
+         +Von : Moderator <<nn>>
+         +An : Spieler <<nn>>
+       }
+   }
+   '-----PACKAGE 5: Moderation 
+   package "Moderation" as P_Moderation #EED2EE {
+   class Protokoll <<entity>> {
+       +ProtokollID : int <<nn>>
+       +Aktion : ProtokollAktion <<nn>>
+       +Details : string
+       +Zeitstempel : DateTime <<nn>>
+       +Session : Session <<nn>>
+       +AusgefuehrtVon : Benutzer <<nn>>
+     }
+   class Spielverlauf <<entity>> {
+         +VerlaufID : int <<nn>>
+         +IstKorrekt : bool <<nn>>
+         +PunkteErhalten : int <<nn>>
+         +Zeitstempel : DateTime <<nn>>
+         +Session : Session <<nn>>
+         +Spieler : Spieler <<nn>>
+         +Karte : Karte <<nn>>
+         +GewaehlteOption : Option <<nn>>
+       }
+   }
+   '---Bezihungen--
+   
+   'kein join nötig 
+   Benutzer <|-- Spieler
+   Benutzer <|-- Moderator
+   Benutzer <|-- Admin
+   
+   ' 1:1 → jeder Spieler hat genau eine Statistik
+   Spieler "1" -- "1" Statstik 
+   ' 1:N → ein Spieler kann an mehreren Sessions teilnehmen
+   Spieler "1" -- "*" SessionSpieler 
+   ' 1:N → ein Spieler empfängt mehrere Einladungen
+   Spieler "1" -- "*" Einladung
+   ' 1:N → ein Moderator verwaltet mehrere Sessions
+   Moderator "1" -- "*" Session 
+   ' 1:N → ein Moderator sendet mehrere Einladungen
+   Moderator "1" -- "*" Einladung
+   ' 1:N → ein Admin erstellt mehrere Szenarien
+   Admin "1" -- "*" Szenario
+   ' 1:N → ein Szenario hat 1-5 Phasen
+   Szenario "1" -- "*" Phase
+   ' 1:N → eine Phase hat mehrere Karten
+   Phase "1" -- "*" Karte 
+   ' 1:N → eine Karte hat 4 Optionen (A, B, C, D)
+   Karte "1" -- "*" Option
+   ' M:N → Szenario <-> Rollen via Junction
+   Szenario "1" -- "*" SzenarioRolle
+   Rollen "1" -- "*" SzenarioRolle
+   ' N:1 → mehrere Sessions spielen dasselbe Szenario
+   Session "*" -- "1" Szenario 
+   ' M:N mit eigenen Feldern → Junction SessionSpieler
+   Session "1" -- "*" SessionSpieler
+   SessionSpieler "*" -- "1" Spieler
+   ' N:1 → Spieler spielt in Session eine bestimmte Rolle
+   SessionSpieler "*" -- "1" Rollen 
+   ' 1:N → eine Session hat mehrere Einladungen
+   Session "1" -- "*" Einladung
+   ' 1:N → pro Session viele Protokoll-Einträge (Audit-Log)
+   Session "1" -- "*" Protokoll
+   Benutzer "1" -- "*" Protokoll 
+   
+   ' 1:N → pro Session viele Spielentscheidungen
+   Session "1" -- "*" Spielverlauf
+   Spieler "1" -- "*" Spielverlauf 
+   Karte "1" -- "*" Spielverlauf 
+   Option "1" -- "*" Spielverlauf 
+   
+   
+@enduml
