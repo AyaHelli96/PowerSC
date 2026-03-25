@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — CyberSpace NIS2</title>
   <link rel="stylesheet" href="../css/design-system.css">
+  <link rel="stylesheet" href="../css/login.css">
 </head>
 <body>
 
-  <div class="auth-container">
-    <div class="auth-card">
+  <div class="login-container">
+    <div class="login-card">
 
-      <!-- Blauer Header (wie Mock-Up Slide 3) -->
-      <div class="auth-card__header auth-card__header--blue">
-        <h1 class="auth-card__title">Login</h1>
+      <!-- Blauer Header (Mock-Up Slide 3) -->
+      <div class="login-card__header">
+        <h1 class="login-card__title">Login</h1>
       </div>
 
-      <div class="auth-card__body">
+      <div class="login-card__body">
 
         <!-- Meldungen (SCRUM-65) -->
         <div id="alertError" class="alert alert--danger" role="alert">
@@ -29,7 +30,7 @@
           Anmeldung erfolgreich! Sie werden weitergeleitet...
         </div>
 
-        <!-- Formular (wie Mock-Up: E-Mail + Passwort + Checkbox) -->
+        <!-- Formular -->
         <form id="loginForm" novalidate>
 
           <!-- E-Mail -->
@@ -56,7 +57,7 @@
             <label for="rememberMe">Angemeldet bleiben</label>
           </div>
 
-          <!-- Submit Button (blau, zentriert wie Mock-Up) -->
+          <!-- Submit -->
           <button type="submit" class="btn btn--blue btn--center" id="submitBtn">
             Anmelden
           </button>
@@ -64,8 +65,8 @@
         </form>
       </div>
 
-      <!-- Footer Link -->
-      <div class="auth-footer">
+      <!-- Footer -->
+      <div class="login-footer">
         <a href="register.html">Noch nicht registriert? → Registrierung</a>
       </div>
 
