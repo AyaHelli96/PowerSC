@@ -1,0 +1,71 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Formular Karte (F-002)
+ * SCRUM-85: Formular F-002 UI Actio-Karte
+ * SCRUM-93: Formular F-002 Reaktion
+ * SCRUM-94: Farben UI — Karten Farbcodierung
+ *
+ * Farbcodierung Reactio-Karten:
+ *   Positiv    = grün  (#1E8449)
+ *   Negativ    = rot   (#C0392B)
+ *   Recovery   = orange (#F5A623)
+ *   Sackgasse  = grau  (#7F8C8D)
+ * ============================================================================ */
+
+/* Header-Farbklassen je nach Kartentyp (SCRUM-94) */
+.header--actio {
+    background-color: #2C3E50 !important;  /* Standard Dunkelblau für Actio */
+}
+
+.header--positiv {
+    background-color: var(--color-success) !important;
+}
+
+.header--negativ {
+    background-color: var(--color-danger) !important;
+}
+
+.header--recovery {
+    background-color: var(--color-secondary) !important;
+}
+
+.header--sackgasse {
+    background-color: #7F8C8D !important;
+}
+
+/* Farbvorschau unter Reaktionstyp-Dropdown (SCRUM-94) */
+.farbvorschau {
+    margin-top: var(--spacing-sm);
+}
+
+/* Reaktions-Badges — Farbcodierung */
+.reaktions-badge {
+    display: inline-block;
+    padding: 0.35rem 1rem;
+    border-radius: 12px;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+}
+
+.badge--positiv {
+    background-color: rgba(30, 132, 73, 0.15);
+    color: var(--color-success);
+    border: 2px solid var(--color-success);
+}
+
+.badge--negativ {
+    background-color: rgba(192, 57, 43, 0.15);
+    color: var(--color-danger);
+    border: 2px solid var(--color-danger);
+}
+
+.badge--recovery {
+    background-color: rgba(245, 166, 35, 0.15);
+    color: #CC8800;
+    border: 2px solid var(--color-secondary);
+}
+
+.badge--sackgasse {
+    background-color: rgba(127, 140, 141, 0.15);
+    color: #666;
+    border: 2px solid #7F8C8D;
+}

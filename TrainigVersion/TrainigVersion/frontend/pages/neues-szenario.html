@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-001: Neues Szenario — CyberSpace NIS2</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Formular-spezifische Styles -->
+    <link rel="stylesheet" href="../css/formular.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card">
+
+            <!-- Header -->
+            <div class="formular-card__header">
+                <h1 class="formular-card__title">F-001: NEUES SZENARIO ERSTELLEN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <!-- Meldungen -->
+                <div id="alertSuccess" class="alert alert--success" role="alert">
+                    Szenario wurde erfolgreich gespeichert!
+                </div>
+                <div id="alertError" class="alert alert--danger" role="alert">
+                    <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+                </div>
+
+                <!-- Formular -->
+                <form id="neuesSzenarioForm" novalidate>
+
+                    <!-- Szenario-Titel -->
+                    <div class="form-group">
+                        <label for="szenarioTitel">Szenario-Titel *</label>
+                        <input type="text" id="szenarioTitel" name="szenarioTitel"
+                               class="form-control"
+                               placeholder="z.B. Ransomware-Angriff NIS2"
+                               required
+                               maxlength="100">
+                        <div class="invalid-feedback" id="titelError">
+                            Bitte geben Sie einen Titel ein (max. 100 Zeichen).
+                        </div>
+                    </div>
+
+                    <!-- Beschreibung -->
+                    <div class="form-group">
+                        <label for="beschreibung">Beschreibung *</label>
+                        <textarea id="beschreibung" name="beschreibung"
+                                  class="form-control textarea-control"
+                                  placeholder="Kurze Beschreibung..."
+                                  required
+                                  maxlength="500"
+                                  rows="3"></textarea>
+                        <div class="invalid-feedback" id="beschreibungError">
+                            Bitte geben Sie eine Beschreibung ein (max. 500 Zeichen).
+                        </div>
+                    </div>
+
+                    <!-- NIS2-Artikel -->
+                    <div class="form-group">
+                        <label for="nis2Artikel">NIS2-Artikel *</label>
+                        <input type="text" id="nis2Artikel" name="nis2Artikel"
+                               class="form-control"
+                               placeholder="z.B. Art. 21, 23"
+                               required>
+                        <div class="invalid-feedback" id="nis2Error">
+                            Bitte geben Sie den NIS2-Artikel ein.
+                        </div>
+                    </div>
+
+                    <!-- Zwei Spalten: Schwierigkeitsgrad + Status -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schwierigkeitsgrad">Schwierigkeitsgrad *</label>
+                            <select id="schwierigkeitsgrad" name="schwierigkeitsgrad"
+                                    class="form-control"
+                                    required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Leicht">Leicht</option>
+                                <option value="Mittel">Mittel</option>
+                                <option value="Schwer">Schwer</option>
+                                <option value="Sehr Schwer">Sehr Schwer</option>
+                            </select>
+                            <div class="invalid-feedback" id="schwierigkeitError">
+                                Bitte wählen Sie einen Schwierigkeitsgrad.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select id="status" name="status"
+                                    class="form-control"
+                                    required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Entwurf">Entwurf</option>
+                                <option value="Veröffentlicht">Veröffentlicht</option>
+                            </select>
+                            <div class="invalid-feedback" id="statusError">
+                                Bitte wählen Sie einen Status.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zielgruppe -->
+                    <div class="form-group">
+                        <label for="zielgruppe">Zielgruppe</label>
+                        <input type="text" id="zielgruppe" name="zielgruppe"
+                               class="form-control"
+                               placeholder="z.B. CIO, CISO, CTO">
+                    </div>
+
+                    <!-- Zwei Spalten: Dauer + Phasen -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dauer">Geschätzte Dauer (Min) *</label>
+                            <input type="number" id="dauer" name="dauer"
+                                   class="form-control"
+                                   placeholder="z.B. 45"
+                                   required
+                                   min="15"
+                                   max="120">
+                            <div class="invalid-feedback" id="dauerError">
+                                Bitte geben Sie eine Dauer ein (15–120 Min).
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="anzahlPhasen">Anzahl Phasen *</label>
+                            <input type="number" id="anzahlPhasen" name="anzahlPhasen"
+                                   class="form-control"
+                                   placeholder="z.B. 5"
+                                   required
+                                   min="1"
+                                   max="10">
+                            <div class="invalid-feedback" id="phasenError">
+                                Bitte geben Sie 1–10 Phasen ein.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            Speichern
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gemeinsame Validierungsfunktionen -->
+    <script src="../js/validation.js"></script>
+
+    <!-- Formular-Logik -->
+    <script src="../js/neues-szenario.js"></script>
+</body>
+</html>

@@ -20,6 +20,14 @@
   --color-red-dark: #C0392B;
   --color-orange: #F39C12;
 
+  /* --- Alias-Namen (für Sprint 2) --- */
+  --color-primary:      #3498DB;       /* = --color-blue        */
+  --color-primary-dark: #2980B9;       /* = --color-blue-dark   */
+  --color-secondary:    #F5A623;       /* Orange für Recovery   */
+  --color-success:      #1E8449;       /* Dunkelgrün            */
+  --color-danger:       #C0392B;       /* Rot für Admin-Header  */
+  --color-danger-dark:  #A93226;
+
   /* --- Neutrale Farben --- */
   --color-white: #FFFFFF;
   --color-bg: #ECF0F1;
@@ -32,6 +40,9 @@
 
   /* --- Typografie --- */
   --font-family: Arial, Helvetica, sans-serif;
+  --font-size-xs:   0.75rem;
+  --font-size-sm:   0.875rem;
+  --font-size-body: 1rem;
 
   /* --- Abstände --- */
   --spacing-xs: 0.25rem;
@@ -128,12 +139,25 @@ body {
 
 .btn:active { transform: scale(0.98); }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+/* Bestehende Button-Klassen (Sprint 1) */
 .btn--green { background: var(--color-green); }
 .btn--green:hover { background: var(--color-green-dark); }
 .btn--blue { background: var(--color-blue); }
 .btn--blue:hover { background: var(--color-blue-dark); }
 .btn--block { width: 100%; }
 .btn--center { margin: 0 auto; display: flex; max-width: 300px; }
+
+/* Neue Button-Klassen (Sprint 2) */
+.btn--primary { background: var(--color-primary); }
+.btn--primary:hover { background: var(--color-primary-dark); }
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.btn--secondary:hover { background: rgba(255, 255, 255, 0.3); }
+.btn--danger { background: var(--color-danger); }
+.btn--danger:hover { background: var(--color-danger-dark); }
 
 /* ============================================================================
    5. ALERTS

@@ -1,0 +1,92 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Formular Styles (gemeinsam für F-001 bis F-009)
+ * SCRUM-77: Formular F-001 UI Karen
+ *
+ * Header-Farbe: Danger (#C0392B) — Admin-Bereich
+ * ============================================================================ */
+
+/* Layout */
+.formular-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    background-color: var(--color-bg);
+}
+
+.formular-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    max-width: 680px;
+    overflow: hidden;
+}
+
+/* Header — Rot (Admin-Bereich) */
+.formular-card__header {
+    background-color: var(--color-danger);
+    padding: var(--spacing-xl);
+    text-align: center;
+}
+
+.formular-card__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+/* Body */
+.formular-card__body {
+    padding: var(--spacing-xl);
+}
+
+/* Textarea */
+.textarea-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* Select */
+select.form-control {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2395A5A6' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 2.5rem;
+}
+
+/* Zwei Spalten nebeneinander */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+/* Buttons am Ende des Formulars */
+.formular-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.formular-buttons .btn {
+    font-size: 1rem;
+    padding: 0.75rem 2rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .formular-card__body { padding: var(--spacing-lg); }
+    .formular-card__title { font-size: 1rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .formular-buttons { flex-direction: column-reverse; }
+    .formular-buttons .btn { width: 100%; text-align: center; }
+}

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGameCreator — Dashboard</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Admin-Dashboard-spezifische Styles -->
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
+</head>
+<body>
+
+    <!-- Header (SCRUM-78: Admin Dashboard) -->
+    <header class="dashboard-header">
+        <h1 class="dashboard-header__title">⚙️ WEBGAMECREATOR - DASHBOARD</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--primary" id="btnNutzer" onclick="window.location.href='nutzer-berechtigungen.html'">
+                👤 Nutzer Berechtigung
+            </button>
+            <button class="btn btn--primary" id="btnNeu" onclick="window.location.href='neues-szenario.html'">
+                ➕ Neues Szenario
+            </button>
+            <button class="btn btn--secondary" id="btnImport">
+                📥 Import
+            </button>
+            <button class="btn btn--secondary" id="btnExport">
+                📤 Export
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <!-- Suchfeld (SCRUM-105) -->
+        <div class="dashboard-search">
+            <input type="text" id="suchfeld" class="form-control search-input"
+                   placeholder="🔍 Szenarien suchen..."
+                   oninput="filterTabelle(this.value)">
+        </div>
+
+        <!-- Tabelle (SCRUM-102, SCRUM-103, SCRUM-104) -->
+        <div class="tabelle-container">
+            <table class="szenarien-tabelle" id="szenarienTabelle">
+                <thead>
+                    <tr>
+                        <th onclick="sortieren('titel')" class="sortierbar">
+                            Titel <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortieren('status')" class="sortierbar">
+                            Status <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortieren('phasen')" class="sortierbar">
+                            Phasen <span class="sort-icon">↕</span>
+                        </th>
+                        <th>Karten</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="tabellBody">
+                    <!-- Zeile 1 -->
+                    <tr data-titel="Ransomware-Angriff NIS2 v2" data-status="entwurf">
+                        <td class="titel-zelle">Ransomware-Angriff NIS2 v2</td>
+                        <td>
+                            <span class="status-badge status-badge--entwurf">Entwurf</span>
+                        </td>
+                        <td class="zahl-zelle">5</td>
+                        <td class="zahl-zelle">20/25</td>
+                        <td class="aktionen-zelle">
+                            <button class="aktion-btn" title="Bearbeiten" onclick="bearbeiten(1)">✏️</button>
+                            <button class="aktion-btn" title="Kopieren" onclick="kopieren(1)">📋</button>
+                            <button class="aktion-btn" title="Speichern" onclick="speichern(1)">💾</button>
+                            <button class="aktion-btn aktion-btn--loeschen" title="Löschen" onclick="loeschen(1)">🗑️</button>
+                        </td>
+                    </tr>
+                    <!-- Zeile 2 -->
+                    <tr data-titel="Ransomware-Angriff NIS2 v1" data-status="veroeffentlicht">
+                        <td class="titel-zelle">Ransomware-Angriff NIS2 v1</td>
+                        <td>
+                            <span class="status-badge status-badge--veroeffentlicht">Veröffentlicht</span>
+                        </td>
+                        <td class="zahl-zelle">3</td>
+                        <td class="zahl-zelle">15/15</td>
+                        <td class="aktionen-zelle">
+                            <button class="aktion-btn" title="Kopieren" onclick="kopieren(2)">📋</button>
+                            <button class="aktion-btn aktion-btn--loeschen" title="Löschen" onclick="loeschen(2)">🗑️</button>
+                        </td>
+                    </tr>
+                    <!-- Zeile 3 -->
+                    <tr data-titel="APT-Supply-Chain" data-status="entwurf">
+                        <td class="titel-zelle">APT-Supply-Chain</td>
+                        <td>
+                            <span class="status-badge status-badge--entwurf">Entwurf</span>
+                        </td>
+                        <td class="zahl-zelle">5</td>
+                        <td class="zahl-zelle">8/30</td>
+                        <td class="aktionen-zelle">
+                            <button class="aktion-btn" title="Bearbeiten" onclick="bearbeiten(3)">✏️</button>
+                            <button class="aktion-btn" title="Kopieren" onclick="kopieren(3)">📋</button>
+                            <button class="aktion-btn" title="Speichern" onclick="speichern(3)">💾</button>
+                            <button class="aktion-btn aktion-btn--loeschen" title="Löschen" onclick="loeschen(3)">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Legende -->
+            <div class="aktionen-legende">
+                Aktionen: ✏️ Bearbeiten &nbsp;|&nbsp; 📋 Kopieren &nbsp;|&nbsp; 💾 Speichern &nbsp;|&nbsp; 🗑️ Löschen
+            </div>
+        </div>
+
+        <!-- Meldung wenn keine Ergebnisse -->
+        <div id="keineErgebnisse" class="keine-ergebnisse" style="display:none;">
+            Keine Szenarien gefunden.
+        </div>
+
+    </main>
+
+    <!-- Lösch-Bestätigung Dialog -->
+    <div id="loeschDialog" class="dialog-overlay" style="display:none;">
+        <div class="dialog">
+            <h2 class="dialog__titel">Szenario löschen?</h2>
+            <p class="dialog__text">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+            <div class="dialog__buttons">
+                <button class="btn btn--secondary" onclick="dialogSchliessen()">Abbrechen</button>
+                <button class="btn btn--danger" onclick="loeschenBestaetigen()">Löschen</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/admin-dashboard.js"></script>
+</body>
+</html>
