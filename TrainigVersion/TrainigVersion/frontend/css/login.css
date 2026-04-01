@@ -1,0 +1,69 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Login Styles
+ * SCRUM-64: ST-6 Login Formular
+ * SCRUM-65: ST-7 Fehlermeldungen
+ *
+ * Farbe: Blau (#3498DB) — Mock-Up Slide 3
+ * ============================================================================ */
+
+/* --- Layout --- */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg);
+}
+
+.login-card {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 780px;
+  overflow: hidden;
+}
+
+/* --- Blauer Header --- */
+.login-card__header {
+  background-color: var(--color-blue);
+  padding: var(--spacing-xxl);
+  text-align: center;
+}
+
+.login-card__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* --- Body --- */
+.login-card__body {
+  padding: var(--spacing-xxl);
+}
+
+/* --- Footer & Info --- */
+.login-footer {
+  text-align: center;
+  padding: 0 var(--spacing-xxl) var(--spacing-xl);
+}
+
+.login-footer a {
+  color: var(--color-link);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* --- Responsive --- */
+@media (max-width: 576px) {
+  .login-card__body { padding: var(--spacing-lg); }
+  .login-card__title { font-size: 1.25rem; }
+}

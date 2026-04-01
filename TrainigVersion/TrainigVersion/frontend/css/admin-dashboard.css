@@ -1,0 +1,274 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Admin Dashboard Styles
+ * SCRUM-78: ST-6 Admin Dashboard Karen
+ * SCRUM-102: ST-7 Dashboard Tabelle UI
+ * SCRUM-103: ST-8 Status Badges
+ * SCRUM-104: ST-9 Aktions-Icons
+ * SCRUM-105: ST-10 Suche & Sortierung
+ *
+ * Header-Farbe: Danger (#C0392B) — WebGameCreator (Rot, Mock-Up Slide 4)
+ * ============================================================================ */
+
+/* Header — Rot wie im Mock-Up */
+.dashboard-header {
+    background-color: var(--color-danger);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/* Buttons im Header kleiner */
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Sekundäre Buttons im Header */
+.btn--secondary {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Danger Button */
+.btn--danger {
+    background: var(--color-danger);
+}
+
+.btn--danger:hover {
+    background: var(--color-danger-dark);
+}
+
+/* Main */
+.dashboard-main {
+    padding: var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Suchfeld (SCRUM-105) */
+.dashboard-search {
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-input {
+    max-width: 400px;
+}
+
+/* Tabelle (SCRUM-102) */
+.tabelle-container {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.szenarien-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.szenarien-tabelle thead tr {
+    background-color: #2C3E50;
+}
+
+.szenarien-tabelle th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-white);
+    white-space: nowrap;
+}
+
+/* Sortierbare Spalten (SCRUM-105) */
+.sortierbar {
+    cursor: pointer;
+    user-select: none;
+}
+
+.sortierbar:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sort-icon {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* Tabellenzeilen */
+.szenarien-tabelle tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color var(--transition);
+}
+
+.szenarien-tabelle tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.szenarien-tabelle tbody tr:last-child {
+    border-bottom: none;
+}
+
+.szenarien-tabelle td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-body);
+    color: var(--color-text);
+}
+
+.titel-zelle {
+    font-weight: 500;
+}
+
+.zahl-zelle {
+    text-align: center;
+    color: var(--color-text-light);
+}
+
+/* Status Badges (SCRUM-103) */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge--entwurf {
+    background-color: rgba(245, 166, 35, 0.15);
+    color: #CC8800;
+    border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+.status-badge--veroeffentlicht {
+    background-color: rgba(30, 132, 73, 0.15);
+    color: var(--color-success);
+    border: 1px solid rgba(30, 132, 73, 0.3);
+}
+
+/* Aktions-Icons (SCRUM-104) */
+.aktionen-zelle {
+    display: flex;
+    gap: var(--spacing-xs);
+    align-items: center;
+}
+
+.aktion-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.125rem;
+    padding: 0.25rem;
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition), transform var(--transition);
+    line-height: 1;
+}
+
+.aktion-btn:hover {
+    background-color: var(--color-border);
+    transform: scale(1.1);
+}
+
+.aktion-btn--loeschen:hover {
+    background-color: rgba(192, 57, 43, 0.1);
+}
+
+/* Legende */
+.aktionen-legende {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-xs);
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-border);
+    background-color: #f9f9f9;
+}
+
+/* Keine Ergebnisse */
+.keine-ergebnisse {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-muted);
+    font-size: var(--font-size-body);
+}
+
+/* Dialog */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.dialog {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.dialog__titel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+}
+
+.dialog__text {
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-xl);
+}
+
+.dialog__buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.dialog__buttons .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-main {
+        padding: var(--spacing-md);
+    }
+
+    .szenarien-tabelle th,
+    .szenarien-tabelle td {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+}

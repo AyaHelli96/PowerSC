@@ -1,0 +1,102 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Registrierung Styles
+ * SCRUM-57: ST-4 Frontend Formular
+ * SCRUM-71: ST-5 Fehlermeldungen UI Passwort
+ *
+ * Farbe: Grün (#2ECC71) — Mock-Up Slide 2
+ * ============================================================================ */
+
+/* --- Layout --- */
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: var(--color-bg);
+}
+
+.register-card {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  width: 100%;
+  max-width: 580px;
+  overflow: hidden;
+}
+
+/* --- Grüner Header --- */
+.register-card__header {
+  background-color: var(--color-green);
+  padding: var(--spacing-xxl);
+  text-align: center;
+}
+
+.register-card__title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* --- Body --- */
+.register-card__body {
+  padding: var(--spacing-xxl);
+}
+
+/* --- Passwort-Stärke Anzeige (SCRUM-71) --- */
+.password-strength {
+  margin-top: var(--spacing-sm);
+}
+
+.password-strength__bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-border);
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.password-strength__fill {
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  transition: width var(--transition), background-color var(--transition);
+}
+
+.password-strength__fill--weak { width: 33%; background: var(--color-red); }
+.password-strength__fill--medium { width: 66%; background: var(--color-orange); }
+.password-strength__fill--strong { width: 100%; background: var(--color-green); }
+.password-strength__text { font-size: 0.75rem; color: var(--color-text-light); text-align: left; }
+
+/* --- Footer & Info --- */
+.register-footer {
+  text-align: center;
+  padding: 0 var(--spacing-xxl) var(--spacing-lg);
+}
+
+.register-footer a {
+  color: var(--color-link);
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+.register-info {
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+  font-style: italic;
+  padding: 0 var(--spacing-xxl) var(--spacing-xl);
+}
+
+/* --- Responsive --- */
+@media (max-width: 576px) {
+  .register-card__body { padding: var(--spacing-lg); }
+  .register-card__title { font-size: 1.25rem; }
+}

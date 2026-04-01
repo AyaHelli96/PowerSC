@@ -1,0 +1,35 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TrainigVersion", "TrainigVersion", "{4C235634-6072-DAB8-D66C-EE7EE1381D19}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TrainigVersion", "TrainigVersion", "{FFA5A2F2-FE54-4ED4-6D28-7726EB73C211}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{98E7F3DB-5155-DDBA-940B-BB24CD1C804A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CyberSpaceNIS2.API", "TrainigVersion\TrainigVersion\backend\CyberSpaceNIS2.API\CyberSpaceNIS2.API.csproj", "{49E587D3-0069-DCEB-0226-266FE696DA53}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{49E587D3-0069-DCEB-0226-266FE696DA53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49E587D3-0069-DCEB-0226-266FE696DA53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49E587D3-0069-DCEB-0226-266FE696DA53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49E587D3-0069-DCEB-0226-266FE696DA53}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FFA5A2F2-FE54-4ED4-6D28-7726EB73C211} = {4C235634-6072-DAB8-D66C-EE7EE1381D19}
+		{98E7F3DB-5155-DDBA-940B-BB24CD1C804A} = {FFA5A2F2-FE54-4ED4-6D28-7726EB73C211}
+		{49E587D3-0069-DCEB-0226-266FE696DA53} = {98E7F3DB-5155-DDBA-940B-BB24CD1C804A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5DD4BBC-54B1-42D7-82E6-F7A82511718C}
+	EndGlobalSection
+EndGlobal

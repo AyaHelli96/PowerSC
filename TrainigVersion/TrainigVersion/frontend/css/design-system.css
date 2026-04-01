@@ -1,19 +1,17 @@
 /* ============================================================================
- * CyberSpace NIS2 — Design System
+ * CyberSpace NIS2 — Design System (Basis)
  * HTL Spengergasse Wien | Diplomarbeit 2025/2026
  * Karen Garcia — Frontend
  *
- * Farben aus Mock-Up (v3, 26 Slides):
- *   Registrierung: #2ECC71 (Grün)
- *   Login:         #3498DB (Blau)
- *   Hintergrund:   #ECF0F1 (Hellgrau)
- *   Inputs:        #FAFAFA
- *   Erfolg:        #2ECC71
- *   Fehler:        #E74C3C
+ * Inhalt: Variablen, Farben, Typografie, Reset, gemeinsame Komponenten
+ * Wird von ALLEN Seiten importiert
  * ============================================================================ */
 
+/* ============================================================================
+   1. CSS VARIABLEN
+   ============================================================================ */
 :root {
-  /* --- Farben aus Mock-Up --- */
+  /* --- Farben aus Mock-Up (v3) --- */
   --color-green: #2ECC71;
   --color-green-dark: #27AE60;
   --color-blue: #3498DB;
@@ -21,6 +19,14 @@
   --color-red: #E74C3C;
   --color-red-dark: #C0392B;
   --color-orange: #F39C12;
+
+  /* --- Alias-Namen (für Sprint 2) --- */
+  --color-primary:      #3498DB;       /* = --color-blue        */
+  --color-primary-dark: #2980B9;       /* = --color-blue-dark   */
+  --color-secondary:    #F5A623;       /* Orange für Recovery   */
+  --color-success:      #1E8449;       /* Dunkelgrün            */
+  --color-danger:       #C0392B;       /* Rot für Admin-Header  */
+  --color-danger-dark:  #A93226;
 
   /* --- Neutrale Farben --- */
   --color-white: #FFFFFF;
@@ -34,6 +40,9 @@
 
   /* --- Typografie --- */
   --font-family: Arial, Helvetica, sans-serif;
+  --font-size-xs:   0.75rem;
+  --font-size-sm:   0.875rem;
+  --font-size-body: 1rem;
 
   /* --- Abstände --- */
   --spacing-xs: 0.25rem;
@@ -52,6 +61,9 @@
   --transition: 200ms ease;
 }
 
+/* ============================================================================
+   2. RESET & BASIS
+   ============================================================================ */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -64,56 +76,7 @@ body {
 }
 
 /* ============================================================================
-   AUTH LAYOUT
-   ============================================================================ */
-.auth-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--spacing-lg);
-  background-color: var(--color-bg);
-}
-
-.auth-card {
-  background: var(--color-white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-card);
-  width: 100%;
-  max-width: 500px;
-  overflow: hidden;
-}
-
-/* --- Header (farbig, oben an der Card) --- */
-.auth-card__header {
-  padding: var(--spacing-xl) var(--spacing-xxl);
-  text-align: center;
-}
-
-.auth-card__header--green {
-  background-color: var(--color-green);
-}
-
-.auth-card__header--blue {
-  background-color: var(--color-blue);
-}
-
-.auth-card__title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-white);
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* --- Body (Formular) --- */
-.auth-card__body {
-  padding: var(--spacing-xl) var(--spacing-xxl) var(--spacing-lg);
-}
-
-/* ============================================================================
-   FORMULAR
+   3. GEMEINSAME FORMULAR-KOMPONENTEN
    ============================================================================ */
 .form-group {
   margin-bottom: var(--spacing-lg);
@@ -122,17 +85,17 @@ body {
 
 .form-group label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 700;
   color: var(--color-text);
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
 }
 
 .form-control {
   width: 100%;
-  padding: 0.625rem 0.875rem;
+  padding: 0.75rem 1rem;
   font-family: var(--font-family);
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--color-text);
   background: var(--color-input-bg);
   border: 1px solid var(--color-border);
@@ -140,99 +103,31 @@ body {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.form-control::placeholder {
-  color: var(--color-muted);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--color-blue);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-}
-
-.form-control.is-invalid {
-  border-color: var(--color-red);
-}
-
-.form-control.is-invalid:focus {
-  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
-}
-
-.form-control.is-valid {
-  border-color: var(--color-green);
-}
+.form-control::placeholder { color: var(--color-muted); }
+.form-control:focus { outline: none; border-color: var(--color-blue); box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15); }
+.form-control.is-invalid { border-color: var(--color-red); }
+.form-control.is-invalid:focus { box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15); }
+.form-control.is-valid { border-color: var(--color-green); }
 
 /* --- Fehlermeldungen --- */
-.invalid-feedback {
-  display: none;
-  font-size: 0.8125rem;
-  color: var(--color-red);
-  margin-top: var(--spacing-xs);
-  text-align: left;
-}
-
-.form-control.is-invalid ~ .invalid-feedback {
-  display: block;
-}
-
-/* --- Passwort-Stärke --- */
-.password-strength {
-  margin-top: var(--spacing-sm);
-}
-
-.password-strength__bar {
-  height: 4px;
-  border-radius: 2px;
-  background: var(--color-border);
-  overflow: hidden;
-  margin-bottom: var(--spacing-xs);
-}
-
-.password-strength__fill {
-  height: 100%;
-  width: 0;
-  border-radius: 2px;
-  transition: width var(--transition), background-color var(--transition);
-}
-
-.password-strength__fill--weak { width: 33%; background: var(--color-red); }
-.password-strength__fill--medium { width: 66%; background: var(--color-orange); }
-.password-strength__fill--strong { width: 100%; background: var(--color-green); }
-.password-strength__text { font-size: 0.75rem; color: var(--color-text-light); text-align: left; }
+.invalid-feedback { display: none; font-size: 0.8125rem; color: var(--color-red); margin-top: var(--spacing-xs); text-align: left; }
+.form-control.is-invalid ~ .invalid-feedback { display: block; }
 
 /* --- Checkbox --- */
-.form-check {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
-}
-
-.form-check input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--color-blue);
-  cursor: pointer;
-}
-
-.form-check label {
-  font-size: 0.875rem;
-  color: var(--color-text);
-  cursor: pointer;
-  margin: 0;
-  text-align: left;
-}
+.form-check { display: flex; align-items: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-lg); }
+.form-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--color-blue); cursor: pointer; }
+.form-check label { font-size: 0.875rem; color: var(--color-text); cursor: pointer; margin: 0; text-align: left; }
 
 /* ============================================================================
-   BUTTONS
+   4. BUTTONS
    ============================================================================ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 2rem;
+  padding: 1rem 2.5rem;
   font-family: var(--font-family);
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--color-white);
   border: none;
@@ -245,70 +140,36 @@ body {
 .btn:active { transform: scale(0.98); }
 .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
+/* Bestehende Button-Klassen (Sprint 1) */
 .btn--green { background: var(--color-green); }
 .btn--green:hover { background: var(--color-green-dark); }
-
 .btn--blue { background: var(--color-blue); }
 .btn--blue:hover { background: var(--color-blue-dark); }
-
 .btn--block { width: 100%; }
-.btn--center { margin: 0 auto; display: flex; max-width: 260px; }
+.btn--center { margin: 0 auto; display: flex; max-width: 300px; }
+
+/* Neue Button-Klassen (Sprint 2) */
+.btn--primary { background: var(--color-primary); }
+.btn--primary:hover { background: var(--color-primary-dark); }
+.btn--secondary {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+.btn--secondary:hover { background: rgba(255, 255, 255, 0.3); }
+.btn--danger { background: var(--color-danger); }
+.btn--danger:hover { background: var(--color-danger-dark); }
 
 /* ============================================================================
-   ALERTS
+   5. ALERTS
    ============================================================================ */
-.alert {
-  padding: 0.75rem 1rem;
-  border-radius: var(--border-radius);
-  font-size: 0.875rem;
-  margin-bottom: var(--spacing-lg);
-  display: none;
-}
-
-.alert--danger {
-  background: rgba(231, 76, 60, 0.1);
-  color: var(--color-red-dark);
-  border: 1px solid rgba(231, 76, 60, 0.2);
-}
-
-.alert--success {
-  background: rgba(46, 204, 113, 0.1);
-  color: var(--color-green-dark);
-  border: 1px solid rgba(46, 204, 113, 0.2);
-}
-
+.alert { padding: 0.75rem 1rem; border-radius: var(--border-radius); font-size: 0.875rem; margin-bottom: var(--spacing-lg); display: none; }
+.alert--danger { background: rgba(231, 76, 60, 0.1); color: var(--color-red-dark); border: 1px solid rgba(231, 76, 60, 0.2); }
+.alert--success { background: rgba(46, 204, 113, 0.1); color: var(--color-green-dark); border: 1px solid rgba(46, 204, 113, 0.2); }
 .alert.show { display: block; }
 
 /* ============================================================================
-   FOOTER & LINKS
-   ============================================================================ */
-.auth-footer {
-  text-align: center;
-  padding: 0 var(--spacing-xxl) var(--spacing-lg);
-}
-
-.auth-footer a {
-  color: var(--color-link);
-  text-decoration: none;
-  font-size: 0.875rem;
-}
-
-.auth-footer a:hover {
-  text-decoration: underline;
-}
-
-.auth-info {
-  text-align: center;
-  font-size: 0.8125rem;
-  color: var(--color-muted);
-  font-style: italic;
-  padding: 0 var(--spacing-xxl) var(--spacing-xl);
-}
-
-/* ============================================================================
-   RESPONSIVE
+   6. RESPONSIVE
    ============================================================================ */
 @media (max-width: 576px) {
-  .auth-card__body { padding: var(--spacing-lg); }
-  .auth-card__title { font-size: 1.25rem; }
+  body { font-size: 0.9375rem; }
 }

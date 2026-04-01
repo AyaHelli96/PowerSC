@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-002: Karte erstellen — CyberSpace NIS2</title>
+
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/formular.css">
+    <link rel="stylesheet" href="../css/formular-karte.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card" id="karteCard">
+
+            <!-- Header — Farbe ändert sich je nach Kartentyp (SCRUM-94) -->
+            <div class="formular-card__header" id="karteHeader">
+                <h1 class="formular-card__title" id="karteTitle">F-002: KARTE ERSTELLEN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <!-- Meldungen -->
+                <div id="alertSuccess" class="alert alert--success" role="alert">
+                    Karte wurde erfolgreich gespeichert!
+                </div>
+                <div id="alertError" class="alert alert--danger" role="alert">
+                    <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+                </div>
+
+                <form id="karteForm" novalidate>
+
+                    <!-- Zwei Spalten: Karten-ID + Kartentyp -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kartenId">Karten-ID *</label>
+                            <input type="text" id="kartenId" name="kartenId"
+                                   class="form-control"
+                                   placeholder="z.B. 100.000"
+                                   required>
+                            <div class="invalid-feedback" id="kartenIdError">
+                                Bitte geben Sie eine Karten-ID ein (z.B. 100.000).
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="kartentyp">Kartentyp *</label>
+                            <select id="kartentyp" name="kartentyp"
+                                    class="form-control"
+                                    onchange="kartenTypWechseln(this.value)"
+                                    required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Actio">Actio</option>
+                                <option value="Reactio">Reactio</option>
+                            </select>
+                            <div class="invalid-feedback" id="kartentypError">
+                                Bitte wählen Sie einen Kartentyp.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reaktionstyp (nur bei Reactio sichtbar, SCRUM-93 + SCRUM-94) -->
+                    <div id="reaktionstypBlock" class="form-group" style="display:none;">
+                        <label for="reaktionstyp">Reaktionstyp *</label>
+                        <select id="reaktionstyp" name="reaktionstyp"
+                                class="form-control"
+                                onchange="reaktionsTypWechseln(this.value)">
+                            <option value="">Bitte wählen...</option>
+                            <option value="positiv">✅ Positiver Schritt (NNN:001) +50 Punkte</option>
+                            <option value="negativ">❌ Negativer Schritt (NNN:002) -30 Punkte</option>
+                            <option value="recovery">🔄 Wiederherstellung (NNN:003) +20 Punkte</option>
+                            <option value="sackgasse">🚫 Sackgasse (NNN:004) -50 Punkte</option>
+                        </select>
+                        <div class="invalid-feedback" id="reaktionstypError">
+                            Bitte wählen Sie einen Reaktionstyp.
+                        </div>
+
+                        <!-- Farbvorschau Badge (SCRUM-94) -->
+                        <div id="farbvorschau" class="farbvorschau" style="display:none;">
+                            <span id="farbvorschauBadge" class="reaktions-badge"></span>
+                        </div>
+                    </div>
+
+                    <!-- Karten-Titel -->
+                    <div class="form-group">
+                        <label for="kartenTitel">Karten-Titel *</label>
+                        <input type="text" id="kartenTitel" name="kartenTitel"
+                               class="form-control"
+                               placeholder="z.B. Ransomware-Angriff erkannt"
+                               required
+                               maxlength="80">
+                        <div class="invalid-feedback" id="kartenTitelError">
+                            Bitte geben Sie einen Titel ein (max. 80 Zeichen).
+                        </div>
+                    </div>
+
+                    <!-- Kartentext -->
+                    <div class="form-group">
+                        <label for="kartentext">Kartentext *</label>
+                        <textarea id="kartentext" name="kartentext"
+                                  class="form-control textarea-control"
+                                  placeholder="Haupttext der Karte..."
+                                  required
+                                  maxlength="300"
+                                  rows="3"></textarea>
+                        <div class="invalid-feedback" id="kartentextError">
+                            Bitte geben Sie einen Kartentext ein (max. 300 Zeichen).
+                        </div>
+                    </div>
+
+                    <!-- Optionen A–D (nur bei Actio sichtbar, SCRUM-85) -->
+                    <div id="optionenBlock" style="display:none;">
+                        <div class="form-group">
+                            <label for="optionA">Option A *</label>
+                            <input type="text" id="optionA" name="optionA"
+                                   class="form-control"
+                                   placeholder="Erste Antwortoption"
+                                   maxlength="100">
+                            <div class="invalid-feedback" id="optionAError">
+                                Bitte geben Sie Option A ein.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="optionB">Option B *</label>
+                            <input type="text" id="optionB" name="optionB"
+                                   class="form-control"
+                                   placeholder="Zweite Antwortoption"
+                                   maxlength="100">
+                            <div class="invalid-feedback" id="optionBError">
+                                Bitte geben Sie Option B ein.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="optionC">Option C</label>
+                            <input type="text" id="optionC" name="optionC"
+                                   class="form-control"
+                                   placeholder="Dritte Antwortoption (optional)"
+                                   maxlength="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="optionD">Option D</label>
+                            <input type="text" id="optionD" name="optionD"
+                                   class="form-control"
+                                   placeholder="Vierte Antwortoption (optional)"
+                                   maxlength="100">
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            Speichern
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/validation.js"></script>
+    <script src="../js/formular-karte.js"></script>
+</body>
+</html>

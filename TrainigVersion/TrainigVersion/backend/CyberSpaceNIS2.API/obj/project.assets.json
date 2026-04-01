@@ -1477,23 +1477,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\ekate_1172mcv\\.nuget\\packages\\": {},
+    "C:\\Users\\Ayahi\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ekate_1172mcv\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\CyberSpaceNIS2.API.csproj",
+      "projectUniqueName": "C:\\Users\\Ayahi\\Documents\\GitHub\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\CyberSpaceNIS2.API.csproj",
       "projectName": "CyberSpaceNIS2.API",
-      "projectPath": "C:\\Users\\ekate_1172mcv\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\CyberSpaceNIS2.API.csproj",
-      "packagesPath": "C:\\Users\\ekate_1172mcv\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ekate_1172mcv\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\obj\\",
+      "projectPath": "C:\\Users\\Ayahi\\Documents\\GitHub\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\CyberSpaceNIS2.API.csproj",
+      "packagesPath": "C:\\Users\\Ayahi\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Ayahi\\Documents\\GitHub\\PowerSC\\TrainigVersion\\TrainigVersion\\backend\\CyberSpaceNIS2.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\ekate_1172mcv\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Ayahi\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -1502,7 +1502,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
