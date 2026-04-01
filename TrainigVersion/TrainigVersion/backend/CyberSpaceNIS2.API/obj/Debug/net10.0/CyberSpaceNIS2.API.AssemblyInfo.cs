@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CyberSpaceNIS2.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd1131ceb6090208808f711d9f98b0af6224452d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b1a6ffef8e950e574457d117398c8d0fdf0a0331")]
 [assembly: System.Reflection.AssemblyProductAttribute("CyberSpaceNIS2.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CyberSpaceNIS2.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
