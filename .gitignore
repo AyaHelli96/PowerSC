@@ -2,3 +2,6 @@ obj/
 bin/ 
 .idea/ 
 *.user 
+bin/ 
+obj/ 
+.idea/ 

@@ -21,34 +21,27 @@ public class KartenController : ControllerBase
     [HttpPost("actio")]
     public async Task<IActionResult> CreateActioKarte([FromBody] CreateKarteRequest request)
     {
-        // Validierung: Titel max 80 Zeichen
         if (string.IsNullOrWhiteSpace(request.Titel) || request.Titel.Length > 80)
             return BadRequest(new { message = "Titel ist Pflichtfeld (max. 80 Zeichen)." });
 
-        // Validierung: Inhalt max 300 Zeichen
         if (request.Inhalt != null && request.Inhalt.Length > 300)
             return BadRequest(new { message = "Kartentext darf max. 300 Zeichen haben." });
 
-        // Validierung: Mindestens eine Option
         if (request.Optionen == null || request.Optionen.Count == 0)
             return BadRequest(new { message = "Mindestens eine Option ist erforderlich." });
 
-        // Validierung: Optionen max 100 Zeichen
         foreach (var opt in request.Optionen)
         {
             if (string.IsNullOrWhiteSpace(opt.Text) || opt.Text.Length > 100)
                 return BadRequest(new { message = "Jede Option muss einen Text haben (max. 100 Zeichen)." });
         }
 
-        // Validierung: Mindestens eine korrekte Option
         if (!request.Optionen.Any(o => o.IstRichtig))
             return BadRequest(new { message = "Mindestens eine Option muss als korrekt markiert sein." });
 
-        // KartenCode generieren: ACT:001, ACT:002, ...
         var anzahlActio = await _db.Karte.CountAsync(k => k.KartenTyp == "Aktion");
         var kartenCode = $"ACT:{(anzahlActio + 1):D3}";
 
-        // Karte erstellen
         var karte = new Karte
         {
             PhaseId = request.PhaseId,
@@ -63,7 +56,6 @@ public class KartenController : ControllerBase
         _db.Karte.Add(karte);
         await _db.SaveChangesAsync();
 
-        // Optionen erstellen
         foreach (var optRequest in request.Optionen)
         {
             var option = new Option
@@ -77,7 +69,6 @@ public class KartenController : ControllerBase
         }
         await _db.SaveChangesAsync();
 
-        // Response zusammenbauen
         var response = new KarteResponse
         {
             KarteId = karte.KarteId,
@@ -95,6 +86,66 @@ public class KartenController : ControllerBase
         };
 
         return Created($"/api/karten/{karte.KarteId}", response);
+    }
+
+    // POST /api/karten/reactio → Neue Reactio-Karte erstellen
+    [HttpPost("reactio")]
+    public async Task<IActionResult> CreateReactioKarte([FromBody] CreateReactioKarteRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.Titel) || request.Titel.Length > 80)
+            return BadRequest(new { message = "Titel ist Pflichtfeld (max. 80 Zeichen)." });
+
+        if (request.Inhalt != null && request.Inhalt.Length > 300)
+            return BadRequest(new { message = "Kartentext darf max. 300 Zeichen haben." });
+
+        var erlaubteTypen = new[] { "PositiverSchritt", "NegativerSchritt", "Wiederherstellung", "Sackgasse" };
+        if (!erlaubteTypen.Contains(request.ReaktionsTyp))
+            return BadRequest(new { message = "ReaktionsTyp muss sein: PositiverSchritt, NegativerSchritt, Wiederherstellung oder Sackgasse." });
+
+        var erlaubtePunkte = new Dictionary<string, int>
+        {
+            { "PositiverSchritt", 50 },
+            { "NegativerSchritt", -30 },
+            { "Wiederherstellung", 20 },
+            { "Sackgasse", -50 }
+        };
+
+        if (erlaubtePunkte[request.ReaktionsTyp] != request.Punkte)
+            return BadRequest(new { message = $"Punkte fuer {request.ReaktionsTyp} muessen {erlaubtePunkte[request.ReaktionsTyp]} sein." });
+
+        var aktioKarte = await _db.Karte.FirstOrDefaultAsync(k => k.KarteId == request.AktioKarteId && k.KartenTyp == "Aktion");
+        if (aktioKarte == null)
+            return BadRequest(new { message = "Die verknuepfte Actio-Karte wurde nicht gefunden." });
+
+        var anzahlReactio = await _db.Karte.CountAsync(k => k.KartenTyp == "Reaktion");
+        var kartenCode = $"REA:{(anzahlReactio + 1):D3}";
+
+        var karte = new Karte
+        {
+            PhaseId = request.PhaseId,
+            Titel = request.Titel,
+            Inhalt = request.Inhalt,
+            KartenTyp = "Reaktion",
+            Punkte = request.Punkte,
+            KartenCode = kartenCode,
+            ReaktionsTyp = request.ReaktionsTyp,
+            AktioKarteId = request.AktioKarteId,
+            Reihenfolge = anzahlReactio + 1
+        };
+
+        _db.Karte.Add(karte);
+        await _db.SaveChangesAsync();
+
+        return Created($"/api/karten/{karte.KarteId}", new KarteResponse
+        {
+            KarteId = karte.KarteId,
+            KartenCode = kartenCode,
+            Titel = karte.Titel,
+            Inhalt = karte.Inhalt,
+            KartenTyp = karte.KartenTyp,
+            Punkte = karte.Punkte,
+            Optionen = new List<OptionResponse>()
+        });
     }
 
     // GET /api/karten → Alle Karten auflisten

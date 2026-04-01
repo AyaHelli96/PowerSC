@@ -34,3 +34,12 @@ public class OptionResponse
     public bool IstRichtig { get; set; }
     public int Punkte { get; set; }
 }
+public class CreateReactioKarteRequest
+{
+    public int PhaseId { get; set; }
+    public int AktioKarteId { get; set; }                     // Verknüpfung mit Actio-Karte
+    public string Titel { get; set; } = string.Empty;          // max 80
+    public string? Inhalt { get; set; }                        // max 300
+    public string ReaktionsTyp { get; set; } = string.Empty;   // PositiverSchritt, NegativerSchritt, Wiederherstellung, Sackgasse
+    public int Punkte { get; set; }                            // +50, -30, +20, -50
+}
