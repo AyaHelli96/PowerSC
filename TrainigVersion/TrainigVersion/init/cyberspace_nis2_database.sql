@@ -85,6 +85,8 @@ CREATE TABLE Session (
                          Endzeit DATETIME NULL,
                          ErstelltAm DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
                          BeendigungsGrund VARCHAR(200) NULL,
+                         PausierZeit      DATETIME NULL COMMENT 'Wann wurde pausiert',
+                         PausierGrund     VARCHAR(200) NULL COMMENT 'Optionaler Grund',
                          FOREIGN KEY (SzenarioID) REFERENCES Szenario(SzenarioID),
                          FOREIGN KEY (ModeratorID) REFERENCES Benutzer(BenutzerID)
 ) COMMENT = 'Laufende Spielsessions';
@@ -349,7 +351,9 @@ ALTER TABLE Protokoll
     'PunktErhalten',
     'Gesperrt',
     'SessionPausiert'
+    'SessionFortgesetzt'  -- sprint 5 
     ) NOT NULL;
+
     
 -- **************************************
 -- SCHRITT 4: SEED-DATEN
@@ -699,6 +703,30 @@ GROUP BY
     sz.Titel, sz.SchwierigkeitsGrad,
     b.BenutzerId, b.Benutzername;
 
+-- View_PausierteSessions (US 2.2.1 - ST-4)
+CREATE VIEW View_PausierteSessions AS
+SELECT
+    s.SessionID,
+    s.SessionName,
+    s.PausierZeit,
+    s.PausierGrund,
+    s.ErstelltAm,
+    sz.Titel            AS SzenarioTitel,
+    sz.SchwierigkeitsGrad,
+    b.BenutzerId        AS ModeratorId,
+    b.Benutzername      AS Moderator,
+    COUNT(ss.SpielerId) AS AnzahlSpieler
+FROM Session s
+         JOIN Szenario sz          ON s.SzenarioID  = sz.SzenarioId
+         JOIN Benutzer b           ON s.ModeratorID = b.BenutzerId
+         LEFT JOIN SessionSpieler ss ON s.SessionID = ss.SessionId
+WHERE s.Status = 'Pausiert'
+GROUP BY
+    s.SessionID, s.SessionName,
+    s.PausierZeit, s.PausierGrund, s.ErstelltAm,
+    sz.Titel, sz.SchwierigkeitsGrad,
+    b.BenutzerId, b.Benutzername;
+
 
 
 -- ******************
@@ -745,19 +773,44 @@ WHERE SessionId = p_SessionId;
 END$$
 DELIMITER ;
 
--- Session pausieren (US 2.1.1 - ST-3)
+-- Session pausieren (US 2.1.1 - ST-3)(US 2.2.1 - ST-2)
 DELIMITER $$
 CREATE PROCEDURE SP_SessionPausieren(
-    IN p_SessionId INT
+    IN p_SessionId  INT,
+    IN p_Grund      VARCHAR(200)
 )
 BEGIN
 UPDATE Session
-SET Status = 'Pausiert'
+SET Status      = 'Pausiert',
+    PausierZeit = CURRENT_TIMESTAMP,
+    PausierGrund = p_Grund
 WHERE SessionId = p_SessionId
   AND Status = 'Aktiv';
 
 INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
-SELECT p_SessionId, ModeratorId, 'SessionPausiert', 'Session pausiert'
+SELECT p_SessionId, ModeratorId, 'SessionPausiert',
+       CONCAT('Session pausiert. Grund: ', COALESCE(p_Grund, 'kein Grund'))
+FROM Session
+WHERE SessionId = p_SessionId;
+END$$
+DELIMITER ;
+
+-- Session fortsetzen (US 2.2.1 - ST-3)
+DELIMITER $$
+CREATE PROCEDURE SP_SessionFortsetzen(
+    IN p_SessionId INT
+)
+BEGIN
+UPDATE Session
+SET Status       = 'Aktiv',
+    PausierZeit  = NULL,
+    PausierGrund = NULL
+WHERE SessionId = p_SessionId
+  AND Status = 'Pausiert';
+
+INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
+SELECT p_SessionId, ModeratorId, 'SessionPausiert',
+       'Session fortgesetzt'
 FROM Session
 WHERE SessionId = p_SessionId;
 END$$
