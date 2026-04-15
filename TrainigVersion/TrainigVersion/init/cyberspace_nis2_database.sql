@@ -73,17 +73,25 @@ CREATE TABLE SzenarioRolle (
 
                                PRIMARY KEY (SzenarioId, RolleId)
 );
-CREATE TABLE Session (
-                         SessionId       INT         NOT NULL AUTO_INCREMENT,
-                         SzenarioId      INT         NOT NULL,
-                         ModeratorId     INT         NOT NULL,
-                         Status          ENUM('Offen','Laufend','Beendet','Abgebrochen') NOT NULL DEFAULT 'Offen',
-                         StartZeit       DATETIME    NULL,
-                         EndZeit         DATETIME    NULL,
-                         ErstelltAm      DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                         PRIMARY KEY (SessionId)
-);
+CREATE TABLE Session (
+                         SessionID INT PRIMARY KEY AUTO_INCREMENT,
+                         SzenarioID INT NOT NULL,
+                         ModeratorID INT NOT NULL,
+                         SessionName VARCHAR(100) NOT NULL COMMENT 'Name der Session',  
+                         Status ENUM('Warten', 'Aktiv', 'Pausiert', 'Beendet') NOT NULL DEFAULT 'Warten',
+                         AktuellePhase INT DEFAULT 1,
+                         Startzeit DATETIME NULL,
+                         Endzeit DATETIME NULL,
+                         ErstelltAm DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         BeendigungsGrund VARCHAR(200) NULL,
+                         PausierZeit      DATETIME NULL COMMENT 'Wann wurde pausiert',
+                         PausierGrund     VARCHAR(200) NULL COMMENT 'Optionaler Grund',
+                         FOREIGN KEY (SzenarioID) REFERENCES Szenario(SzenarioID),
+                         FOREIGN KEY (ModeratorID) REFERENCES Benutzer(BenutzerID)
+) COMMENT = 'Laufende Spielsessions';
+
+
 CREATE TABLE Karte (
                        KarteId         INT             NOT NULL AUTO_INCREMENT,
                        PhaseId         INT             NOT NULL,
@@ -241,7 +249,7 @@ ALTER TABLE Spielverlauf
         FOREIGN KEY (SpielerId) REFERENCES Benutzer(BenutzerId);
 
 -- ------------------------------
--- ---- Tabeele Anbassen
+-- ---- Tabelle Anbassen
 -- PasswortHash VARCHAR(60)
 ALTER TABLE Benutzer
     MODIFY PasswortHash VARCHAR(60) NOT NULL;
@@ -283,6 +291,9 @@ ALTER TABLE Karte
     'Sackgasse'
 ) NULL,
 ADD COLUMN AktioKarteId INT NULL;
+
+-- Karten Sprint 4 US 3.2.2
+ALTER TABLE Karte ADD COLUMN Nis2Artikel VARCHAR(50) NULL;
 
 -- Phase anpassen
 ALTER TABLE Phase
@@ -328,6 +339,20 @@ ALTER TABLE Phase
 ALTER TABLE Phase
     ADD CONSTRAINT FK_Phase_EndKarte
         FOREIGN KEY (EndKarteId) REFERENCES Karte(KarteId);
+
+
+-- -----SessionPausiert 
+ALTER TABLE Protokoll
+    MODIFY Aktion ENUM(
+    'Beigetreten',
+    'Verlassen',
+    'KarteGezogen',
+    'OptionGewaehlt',
+    'PunktErhalten',
+    'Gesperrt',
+    'SessionPausiert'
+    'SessionFortgesetzt'  -- sprint 5 
+    ) NOT NULL;
 
     
 -- **************************************
@@ -451,7 +476,7 @@ FROM Session s
          JOIN Szenario sz     ON s.SzenarioId  = sz.SzenarioId
          JOIN Benutzer b      ON s.ModeratorId = b.BenutzerId
          LEFT JOIN SessionSpieler ss ON s.SessionId = ss.SessionId
-WHERE s.Status IN ('Offen', 'Laufend')
+WHERE s.Status IN ('Warten', 'Aktiv')
 GROUP BY s.SessionId, sz.Titel, sz.SchwierigkeitsGrad,
          b.Benutzername, s.Status, s.StartZeit;
 
@@ -482,7 +507,7 @@ SELECT
     COUNT(s.SessionId)                              AS GesamtSessions,
     SUM(CASE WHEN s.Status = 'Beendet' THEN 1
              ELSE 0 END)                            AS AbgeschlosseneSessions,
-    SUM(CASE WHEN s.Status = 'Laufend' THEN 1
+    SUM(CASE WHEN s.Status = 'Aktiv' THEN 1
              ELSE 0 END)                            AS LaufendeSessions
 FROM Benutzer b
          LEFT JOIN Session s ON b.BenutzerId = s.ModeratorId
@@ -596,16 +621,119 @@ ORDER BY
         WHEN 'Mittel'  THEN 2
         WHEN 'Schwer'  THEN 3
         END;
+-- View SpilerVerlauf Sprint 4 
+CREATE VIEW View_SpielverlaufDetail AS
+SELECT
+    sv.SpieverlaufId,
+    sv.SessionId,
+    sv.SpielerId,
+    b.Benutzername      AS Spieler,
+    k.KarteId,
+    k.Titel             AS KarteTitel,
+    k.Inhalt            AS KarteText,
+    k.KartenTyp,
+    k.Punkte            AS MaxPunkte,
+    sv.OptionId,
+    o.Text              AS GewaehlteOption,
+    o.IstRichtig,
+    sv.ErhaltePunkte,
+    sv.Zeitstempel,
+    p.Titel             AS PhaseTitel,
+    p.Reihenfolge       AS PhaseNummer,
+    sz.Titel            AS SzenarioTitel,
+    0                   AS AbgeschlossenePhasen,
+    0                   AS GesamtPhasen,
+    0                   AS GespielteKarten,
+    0                   AS GesamtKarten
+FROM Spielverlauf sv
+         JOIN Session s       ON sv.SessionId  = s.SessionID
+         JOIN Szenario sz     ON s.SzenarioID  = sz.SzenarioId
+         JOIN Benutzer b      ON sv.SpielerId  = b.BenutzerId
+         JOIN Karte k         ON sv.KarteId    = k.KarteId
+         JOIN Phase p         ON k.PhaseId     = p.PhaseId
+         LEFT JOIN `Option` o ON sv.OptionId   = o.OptionId;
+-- View Feedback 
+CREATE VIEW View_ErfolgsFeedback AS
+SELECT
+    sv.SpieverlaufId,
+    sv.SessionId,
+    sv.SpielerId,
+    b.Benutzername      AS Spieler,
+    k.Titel             AS KarteTitel,
+    o.Text              AS GewaehlteOption,
+    o.IstRichtig,
+    sv.ErhaltePunkte,
+    k.KartenTyp,
+    -- Reaktions-Karte NNN:001 = PositiverSchritt
+    r.ReaktionsTyp,
+    r.Inhalt            AS Erklaerung,
+    r.Nis2Artikel       AS Nis2Referenz,
+    ss.Punkte           AS GesamtPunkte
+FROM Spielverlauf sv
+         JOIN Benutzer b         ON sv.SpielerId  = b.BenutzerId
+         JOIN `Option` o         ON sv.OptionId   = o.OptionId
+         JOIN Karte k            ON sv.KarteId    = k.KarteId
+         LEFT JOIN Karte r       ON k.KarteId     = r.AktioKarteId
+    AND r.ReaktionsTyp = 'PositiverSchritt'
+         JOIN SessionSpieler ss  ON sv.SessionId  = ss.SessionId
+    AND sv.SpielerId  = ss.SpielerId
+WHERE o.IstRichtig = 1;
+
+-- View_ModeratorSessions (US 2.1.1 - ST-1)
+CREATE VIEW View_ModeratorSessions AS
+SELECT
+    s.SessionId,
+    s.SessionName,
+    s.Status,
+    s.ErstelltAm,
+    s.Startzeit,
+    s.Endzeit,
+    sz.Titel        AS SzenarioTitel,
+    sz.SchwierigkeitsGrad,
+    b.BenutzerId    AS ModeratorId,
+    b.Benutzername  AS Moderator,
+    COUNT(ss.SpielerId) AS AnzahlSpieler
+FROM Session s
+         JOIN Szenario sz     ON s.SzenarioId  = sz.SzenarioId
+         JOIN Benutzer b      ON s.ModeratorId = b.BenutzerId
+         LEFT JOIN SessionSpieler ss ON s.SessionId = ss.SessionId
+GROUP BY
+    s.SessionId, s.SessionName, s.Status,
+    s.ErstelltAm, s.Startzeit, s.Endzeit,
+    sz.Titel, sz.SchwierigkeitsGrad,
+    b.BenutzerId, b.Benutzername;
+
+-- View_PausierteSessions (US 2.2.1 - ST-4)
+CREATE VIEW View_PausierteSessions AS
+SELECT
+    s.SessionID,
+    s.SessionName,
+    s.PausierZeit,
+    s.PausierGrund,
+    s.ErstelltAm,
+    sz.Titel            AS SzenarioTitel,
+    sz.SchwierigkeitsGrad,
+    b.BenutzerId        AS ModeratorId,
+    b.Benutzername      AS Moderator,
+    COUNT(ss.SpielerId) AS AnzahlSpieler
+FROM Session s
+         JOIN Szenario sz          ON s.SzenarioID  = sz.SzenarioId
+         JOIN Benutzer b           ON s.ModeratorID = b.BenutzerId
+         LEFT JOIN SessionSpieler ss ON s.SessionID = ss.SessionId
+WHERE s.Status = 'Pausiert'
+GROUP BY
+    s.SessionID, s.SessionName,
+    s.PausierZeit, s.PausierGrund, s.ErstelltAm,
+    sz.Titel, sz.SchwierigkeitsGrad,
+    b.BenutzerId, b.Benutzername;
 
 
 
 -- ******************
 -- STORED PROCEDURES
 -- *******************
-
+-- Neuen Spieler registrieren
 DELIMITER $$
-
--- Neuen Spieler registrieren 
 CREATE PROCEDURE SP_SpielerRegistrieren(
     IN p_Benutzername   VARCHAR(50),
     IN p_Email          VARCHAR(255),
@@ -617,32 +745,99 @@ INSERT INTO Benutzer
 VALUES
     (p_Benutzername, p_Email, p_PasswortHash, 'Spieler', 0, 0);
 END$$
+DELIMITER ;
 
 -- Session starten
+DELIMITER $$
 CREATE PROCEDURE SP_SessionStarten(
     IN p_SessionId  INT
 )
 BEGIN
 UPDATE Session
-SET
-    Status    = 'Laufend',
+SET Status    = 'Aktiv',
     StartZeit = CURRENT_TIMESTAMP
 WHERE SessionId = p_SessionId;
 END$$
+DELIMITER ;
 
--- Session beenden 
+-- Session beenden
+DELIMITER $$
 CREATE PROCEDURE SP_SessionBeenden(
     IN p_SessionId  INT
 )
 BEGIN
 UPDATE Session
-SET
-    Status  = 'Beendet',
+SET Status  = 'Beendet',
     EndZeit = CURRENT_TIMESTAMP
 WHERE SessionId = p_SessionId;
 END$$
+DELIMITER ;
 
--- Spieler zu Session hinzufügen 
+-- Session pausieren (US 2.1.1 - ST-3)(US 2.2.1 - ST-2)
+DELIMITER $$
+CREATE PROCEDURE SP_SessionPausieren(
+    IN p_SessionId  INT,
+    IN p_Grund      VARCHAR(200)
+)
+BEGIN
+UPDATE Session
+SET Status      = 'Pausiert',
+    PausierZeit = CURRENT_TIMESTAMP,
+    PausierGrund = p_Grund
+WHERE SessionId = p_SessionId
+  AND Status = 'Aktiv';
+
+INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
+SELECT p_SessionId, ModeratorId, 'SessionPausiert',
+       CONCAT('Session pausiert. Grund: ', COALESCE(p_Grund, 'kein Grund'))
+FROM Session
+WHERE SessionId = p_SessionId;
+END$$
+DELIMITER ;
+
+-- Session fortsetzen (US 2.2.1 - ST-3)
+DELIMITER $$
+CREATE PROCEDURE SP_SessionFortsetzen(
+    IN p_SessionId INT
+)
+BEGIN
+UPDATE Session
+SET Status       = 'Aktiv',
+    PausierZeit  = NULL,
+    PausierGrund = NULL
+WHERE SessionId = p_SessionId
+  AND Status = 'Pausiert';
+
+INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
+SELECT p_SessionId, ModeratorId, 'SessionPausiert',
+       'Session fortgesetzt'
+FROM Session
+WHERE SessionId = p_SessionId;
+END$$
+DELIMITER ;
+
+-- Protokoll Daten abrufen (US 2.1.1 - ST-4)
+DELIMITER $$
+CREATE PROCEDURE SP_ProtokollDaten(
+    IN p_SessionId INT
+)
+BEGIN
+SELECT
+    p.ProtokollId,
+    p.Zeitstempel,
+    p.Aktion,
+    p.Details,
+    b.Benutzername  AS Benutzer,
+    b.Rolle
+FROM Protokoll p
+         JOIN Benutzer b ON p.BenutzerId = b.BenutzerId
+WHERE p.SessionId = p_SessionId
+ORDER BY p.Zeitstempel ASC;
+END$$
+DELIMITER ;
+
+-- Spieler zu Session hinzufügen
+DELIMITER $$
 CREATE PROCEDURE SP_SpielerHinzufuegen(
     IN p_SessionId  INT,
     IN p_SpielerId  INT
@@ -658,25 +853,25 @@ INSERT INTO Protokoll
 VALUES
     (p_SessionId, p_SpielerId, 'Beigetreten');
 END$$
+DELIMITER ;
 
+-- Punkte vergeben
+DELIMITER $$
 CREATE PROCEDURE SP_PunkteVergeben(
     IN p_SessionId  INT,
     IN p_SpielerId  INT,
     IN p_Punkte     INT
 )
 BEGIN
--- SessionSpieler Punkte updaten
 UPDATE SessionSpieler
 SET Punkte = Punkte + p_Punkte
 WHERE SessionId = p_SessionId
   AND SpielerId = p_SpielerId;
 
--- Gesamtpunkte in Statstik updaten
 UPDATE Statstik
 SET GesamtPunkte = GesamtPunkte + p_Punkte
 WHERE BenutzerId = p_SpielerId;
 
--- Protokoll Eintrag
 INSERT INTO Protokoll
 (SessionId, BenutzerId, Aktion, Details)
 VALUES
@@ -685,7 +880,7 @@ VALUES
 END$$
 DELIMITER ;
 
--- SP_LoginVersuch (US 0.2.1 - Task 9)
+-- Login Versuch (US 0.2.1 - Task 9)
 DELIMITER $$
 CREATE PROCEDURE SP_LoginVersuch(
     IN p_Email   VARCHAR(255),
@@ -709,11 +904,12 @@ WHERE Email = p_Email
 END IF;
 END$$
 DELIMITER ;
--- SP_KartenCodeGenerieren (US 1.2.1 - Task 10)
+
+-- Karten Code generieren (US 1.2.1 - Task 10)
 DELIMITER $$
 CREATE PROCEDURE SP_KartenCodeGenerieren(
-    IN p_KartenTyp   VARCHAR(20),
-    OUT p_KartenCode VARCHAR(10)
+    IN  p_KartenTyp   VARCHAR(20),
+    OUT p_KartenCode  VARCHAR(10)
 )
 BEGIN
     DECLARE anzahl INT;
@@ -733,7 +929,8 @@ FROM Karte WHERE KartenTyp = p_KartenTyp;
 SET p_KartenCode = CONCAT(prefix, ':', LPAD(anzahl, 3, '0'));
 END$$
 DELIMITER ;
--- SP_SzenarioLoeschen (US 1.6.1 - Task 11)
+
+-- Szenario löschen (US 1.6.1 - Task 11)
 DELIMITER $$
 CREATE PROCEDURE SP_SzenarioLoeschen(
     IN p_SzenarioId INT
@@ -753,7 +950,7 @@ END IF;
 END$$
 DELIMITER ;
 
--- SP_SzenarioVeroeffentlichen (US 1.6.1 - Task ST-99)
+-- Szenario veröffentlichen (US 1.6.1 - Task ST-99)
 DELIMITER $$
 CREATE PROCEDURE SP_SzenarioVeroeffentlichen(
     IN p_SzenarioId INT
@@ -766,6 +963,7 @@ WHERE SzenarioId = p_SzenarioId
 END$$
 DELIMITER ;
 
+-- Aktive Szenarien prüfen
 DELIMITER $$
 CREATE PROCEDURE SP_AktiveSzenarienPruefen()
 BEGIN
@@ -781,7 +979,138 @@ END IF;
 END$$
 DELIMITER ;
 
--- SP_RolleSzenarioZuordnen (US 1.4.1 - Task 12)
+-- Option wählen
+DELIMITER $$
+CREATE PROCEDURE SP_OptionWaehlen(
+    IN p_SessionId  INT,
+    IN p_SpielerId  INT,
+    IN p_KarteId    INT,
+    IN p_OptionId   INT
+)
+BEGIN
+    DECLARE istRichtig     TINYINT(1);
+    DECLARE punkte         INT;
+    DECLARE aktuellePunkte INT;
+
+SELECT IstRichtig, Punkte
+INTO istRichtig, punkte
+FROM `Option`
+WHERE OptionId = p_OptionId;
+
+INSERT INTO Spielverlauf
+(SessionId, KarteId, OptionId, SpielerId, ErhaltePunkte)
+VALUES
+    (p_SessionId, p_KarteId, p_OptionId, p_SpielerId,
+     CASE WHEN istRichtig = 1 THEN punkte ELSE 0 END);
+
+IF istRichtig = 1 THEN
+UPDATE SessionSpieler
+SET Punkte = Punkte + punkte
+WHERE SessionId = p_SessionId
+  AND SpielerId = p_SpielerId;
+END IF;
+
+INSERT INTO Protokoll
+(SessionId, BenutzerId, Aktion, Details)
+VALUES
+    (p_SessionId, p_SpielerId, 'OptionGewaehlt',
+     CONCAT('KarteId:', p_KarteId,
+            ' OptionId:', p_OptionId,
+            ' Richtig:', istRichtig,
+            ' Punkte:', CASE WHEN istRichtig = 1 THEN punkte ELSE 0 END));
+
+SELECT
+    istRichtig      AS IstRichtig,
+    CASE WHEN istRichtig = 1 THEN punkte ELSE 0 END AS ErhaltePunkte,
+    ss.Punkte       AS GesamtPunkte
+FROM SessionSpieler ss
+WHERE ss.SessionId = p_SessionId
+  AND ss.SpielerId = p_SpielerId;
+END$$
+DELIMITER ;
+
+-- Phasen Fortschritt (Sprint 4 - Task 3)
+DELIMITER $$
+CREATE PROCEDURE SP_PhasenFortschritt(
+    IN  p_SessionId          INT,
+    IN  p_SpielerId          INT,
+    OUT p_AktuellePhase      INT,
+    OUT p_GesamtPhasen       INT,
+    OUT p_GespielteKarten    INT,
+    OUT p_GesamtKarten       INT,
+    OUT p_FortschrittProzent DECIMAL(5,2),
+    OUT p_AktuellePunkte     INT
+)
+BEGIN
+SELECT COALESCE(MAX(p.Reihenfolge), 1) INTO p_AktuellePhase
+FROM Spielverlauf sv
+         JOIN Karte k ON sv.KarteId = k.KarteId
+         JOIN Phase p ON k.PhaseId  = p.PhaseId
+WHERE sv.SessionId = p_SessionId
+  AND sv.SpielerId = p_SpielerId;
+
+SELECT COUNT(DISTINCT p.PhaseId) INTO p_GesamtPhasen
+FROM Session s
+         JOIN Phase p ON s.SzenarioId = p.SzenarioId
+WHERE s.SessionId = p_SessionId;
+
+SELECT COUNT(DISTINCT sv.KarteId) INTO p_GespielteKarten
+FROM Spielverlauf sv
+WHERE sv.SessionId = p_SessionId
+  AND sv.SpielerId = p_SpielerId;
+
+SELECT COUNT(DISTINCT k.KarteId) INTO p_GesamtKarten
+FROM Session s
+         JOIN Phase p ON s.SzenarioId = p.SzenarioId
+         JOIN Karte k ON p.PhaseId    = k.PhaseId
+WHERE s.SessionId = p_SessionId
+  AND k.KartenTyp != 'Reaktion';
+
+SET p_FortschrittProzent = ROUND(
+        (p_GespielteKarten * 100.0) / NULLIF(p_GesamtKarten, 0), 2
+    );
+
+SELECT Punkte INTO p_AktuellePunkte
+FROM SessionSpieler
+WHERE SessionId = p_SessionId
+  AND SpielerId = p_SpielerId;
+END$$
+DELIMITER ;
+
+-- Erfolgs Punkte vergeben
+DELIMITER $$
+CREATE PROCEDURE SP_ErfolgsPunkteVergeben(
+    IN p_SessionId  INT,
+    IN p_SpielerId  INT,
+    IN p_Punkte     INT
+)
+BEGIN
+UPDATE SessionSpieler
+SET Punkte = Punkte + p_Punkte
+WHERE SessionId = p_SessionId
+  AND SpielerId = p_SpielerId;
+
+UPDATE Statstik
+SET GesamtPunkte   = GesamtPunkte + p_Punkte,
+    BestePunktzahl = GREATEST(BestePunktzahl, GesamtPunkte + p_Punkte)
+WHERE BenutzerId = p_SpielerId;
+
+INSERT INTO Protokoll
+(SessionId, BenutzerId, Aktion, Details)
+VALUES
+    (p_SessionId, p_SpielerId, 'PunktErhalten',
+     CONCAT('+', p_Punkte, ' Punkte (Richtige Antwort - Erfolgsfeedback)'));
+
+SELECT
+    ss.Punkte   AS GesamtPunkte,
+    p_Punkte    AS ErhaltePunkte
+FROM SessionSpieler ss
+WHERE ss.SessionId = p_SessionId
+  AND ss.SpielerId = p_SpielerId;
+END$$
+DELIMITER ;
+
+-- Rolle Szenario zuordnen
 DELIMITER $$
 CREATE PROCEDURE SP_RolleSzenarioZuordnen(
     IN p_RolleId    INT,
@@ -798,7 +1127,7 @@ END IF;
 END$$
 DELIMITER ;
 
--- SP_RolleVergeben (US 2.3.1 - Task 13)
+-- Rolle vergeben (US 2.3.1 - Task 13)
 DELIMITER $$
 CREATE PROCEDURE SP_RolleVergeben(
     IN p_SessionId INT,
@@ -898,6 +1227,28 @@ BEGIN
     IF anzahlRollen <= 5 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Mindestens 5 Standard-Rollen müssen vorhanden sein!';
+END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+-- KeineDoppleteEntscheidung Task 4 Sprint 4 
+CREATE TRIGGER TRG_KeineDoppelteEntscheidung
+    BEFORE INSERT ON Spielverlauf
+    FOR EACH ROW
+BEGIN
+    DECLARE bereitsGespielt INT;
+
+    SELECT COUNT(*) INTO bereitsGespielt
+    FROM Spielverlauf
+    WHERE SessionId = NEW.SessionId
+      AND SpielerId = NEW.SpielerId
+      AND KarteId   = NEW.KarteId;
+
+    IF bereitsGespielt > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT =
+        'Diese Karte wurde bereits gespielt — keine Zurück-Möglichkeit!';
 END IF;
 END$$
 DELIMITER ;

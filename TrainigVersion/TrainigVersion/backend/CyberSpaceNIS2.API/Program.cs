@@ -3,12 +3,12 @@ using CyberSpaceNIS2.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MySQL Verbindung (passend zu docker-compose.yml)
+// MySQL Verbindung
 var connectionString = "Server=localhost;Port=3306;Database=cyberspace_nis2;User=cyberspace_user;Password=cyberspace123;";
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySQL(connectionString));
 
-// CORS erlauben (damit Frontend zugreifen kann)
+// CORS erlauben
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
