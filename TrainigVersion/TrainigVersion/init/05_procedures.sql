@@ -54,19 +54,29 @@ FROM Session WHERE SessionID = p_SessionId;
 END$$
 DELIMITER ;
  
--- Session beenden
+-- Session beenden (US 2.2.2 - ST-2)
 DELIMITER $$
 CREATE PROCEDURE SP_SessionBeenden(
-    IN p_SessionId INT
+    IN p_SessionId INT,
+    IN p_Grund     VARCHAR(200)
 )
 BEGIN
 UPDATE Session
-SET Status  = 'Beendet',
-    Endzeit = CURRENT_TIMESTAMP
+SET Status           = 'Beendet',
+    Endzeit          = CURRENT_TIMESTAMP,
+    BeendigungsGrund = p_Grund
 WHERE SessionID = p_SessionId;
+
+INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
+SELECT p_SessionId, ModeratorID, 'SessionPausiert',
+       CONCAT('Session beendet. Grund: ', COALESCE(p_Grund, 'kein Grund'))
+FROM Session WHERE SessionID = p_SessionId;
+
+SELECT SessionID, Status, Endzeit, BeendigungsGrund
+FROM Session WHERE SessionID = p_SessionId;
 END$$
 DELIMITER ;
- 
+
 -- Session pausieren (US 2.2.1 - ST-2)
 DELIMITER $$
 CREATE PROCEDURE SP_SessionPausieren(
@@ -392,5 +402,110 @@ ELSE
 UPDATE SessionSpieler SET RolleId = p_RolleId
 WHERE SessionId = p_SessionId AND SpielerId = p_SpielerId;
 END IF;
+END$$
+DELIMITER ;
+
+-- Session Recovery (US 2.2.2 - ST-4)
+DELIMITER $$
+CREATE PROCEDURE SP_SessionRecovery(
+    IN p_SessionId INT
+)
+BEGIN
+    -- Session Basis-Daten
+SELECT
+    s.SessionID,
+    s.SessionName,
+    s.Status,
+    s.AktuellePhase,
+    s.Startzeit,
+    s.Endzeit,
+    s.BeendigungsGrund,
+    sz.Titel         AS SzenarioTitel,
+    b.Benutzername   AS Moderator
+FROM Session s
+         JOIN Szenario sz ON s.SzenarioID  = sz.SzenarioId
+         JOIN Benutzer b  ON s.ModeratorID = b.BenutzerId
+WHERE s.SessionID = p_SessionId;
+
+-- Spieler und ihre Punkte
+SELECT
+    b.Benutzername  AS Spieler,
+    ss.Punkte,
+    ss.Status,
+    r.Name          AS Rolle
+FROM SessionSpieler ss
+         JOIN Benutzer b      ON ss.SpielerId = b.BenutzerId
+         LEFT JOIN Rollen r   ON ss.RolleId   = r.RolleId
+WHERE ss.SessionId = p_SessionId;
+
+-- Gespielter Verlauf
+SELECT
+    k.Titel          AS Karte,
+    o.Text           AS GewaehlteOption,
+    o.IstRichtig,
+    sv.ErhaltePunkte,
+    sv.Zeitstempel
+FROM Spielverlauf sv
+         JOIN Karte k         ON sv.KarteId  = k.KarteId
+         LEFT JOIN `Option` o ON sv.OptionId = o.OptionId
+WHERE sv.SessionId = p_SessionId
+ORDER BY sv.Zeitstempel ASC;
+END$$
+DELIMITER ;
+
+
+
+
+-- Victory Berechnen (US 3.3.1 - ST-2)
+DELIMITER $$
+CREATE PROCEDURE SP_VictoryBerechnen(
+    IN  p_SessionId  INT,
+    IN  p_SpielerId  INT,
+    OUT p_IstSieg    TINYINT(1),
+    OUT p_Compliance DECIMAL(5,2)
+        )
+BEGIN
+    DECLARE erreichterPunkte INT;
+    DECLARE maxPunkte        INT;
+    DECLARE schwellwert      DECIMAL(5,2);
+
+    -- Erreichte Punkte des Spielers
+SELECT COALESCE(SUM(ss.Punkte), 0) INTO erreichterPunkte
+FROM SessionSpieler ss
+WHERE ss.SessionId = p_SessionId
+  AND ss.SpielerId = p_SpielerId;
+
+-- Max mögliche Punkte des Szenarios
+SELECT COALESCE(SUM(k.Punkte), 0) INTO maxPunkte
+FROM Session s
+         JOIN Phase p ON s.SzenarioID = p.SzenarioId
+         JOIN Karte k ON p.PhaseId    = k.PhaseId
+WHERE s.SessionID = p_SessionId
+  AND k.KartenTyp != 'Reaktion';
+
+-- Compliance berechnen
+SET p_Compliance = ROUND(
+        (erreichterPunkte * 100.0) / NULLIF(maxPunkte, 0), 2
+    );
+
+    -- Sieg wenn >= 70%
+    SET p_IstSieg = CASE WHEN p_Compliance >= 70 THEN 1 ELSE 0 END;
+
+    -- Statistik aktualisieren
+    IF p_IstSieg = 1 THEN
+UPDATE Statstik
+SET AnzahlSiege       = AnzahlSiege + 1,
+    ComplianceProzent = p_Compliance,
+    LetzterSieg       = CURRENT_TIMESTAMP,
+    BestePunktzahl    = GREATEST(BestePunktzahl, erreichterPunkte)
+WHERE BenutzerId = p_SpielerId;
+END IF;
+
+    -- Ergebnis zurückgeben
+SELECT
+    p_IstSieg           AS IstSieg,
+    erreichterPunkte    AS ErreichtePunkte,
+    maxPunkte           AS MaxPunkte,
+    p_Compliance        AS ComplianceProzent;
 END$$
 DELIMITER ;
