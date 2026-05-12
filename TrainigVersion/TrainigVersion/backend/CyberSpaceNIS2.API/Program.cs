@@ -3,10 +3,11 @@ using CyberSpaceNIS2.API.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MySQL Verbindung
-var connectionString = "Server=localhost;Port=3306;Database=cyberspace_nis2;User=cyberspace_user;Password=cyberspace123;";
+// ✅ Verbindung kommt  aus appsettings - kein Passwort im Code!
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySQL(connectionString));
+    options.UseMySQL(connectionString!));
 
 // CORS erlauben
 builder.Services.AddCors(options =>
