@@ -292,3 +292,60 @@ GROUP BY
     s.AktuellePhase, s.Startzeit, s.Endzeit,
     s.PausierZeit, s.PausierGrund, s.FortsetzungsZeit,
     sz.Titel, sz.SchwierigkeitsGrad, b.Benutzername;
+
+-- View_BeendeteSessions (US 2.2.2 - ST-3)
+CREATE VIEW View_BeendeteSessions AS
+SELECT
+    s.SessionID,
+    s.SessionName,
+    s.Startzeit,
+    s.Endzeit,
+    s.BeendigungsGrund,
+    sz.Titel             AS SzenarioTitel,
+    sz.SchwierigkeitsGrad,
+    b.Benutzername       AS Moderator,
+    COUNT(ss.SpielerId)  AS AnzahlSpieler,
+    COALESCE(SUM(ss.Punkte), 0) AS GesamtPunkte,
+    TIMESTAMPDIFF(MINUTE, s.Startzeit, s.Endzeit) AS DauerMinuten
+FROM Session s
+         JOIN Szenario sz          ON s.SzenarioID  = sz.SzenarioId
+         JOIN Benutzer b           ON s.ModeratorID = b.BenutzerId
+         LEFT JOIN SessionSpieler ss ON s.SessionID = ss.SessionId
+WHERE s.Status = 'Beendet'
+GROUP BY
+    s.SessionID, s.SessionName,
+    s.Startzeit, s.Endzeit, s.BeendigungsGrund,
+    sz.Titel, sz.SchwierigkeitsGrad,
+    b.Benutzername
+ORDER BY s.Endzeit DESC;
+
+-- View_VictoryErgebnis (US 3.3.1 - ST-3)
+CREATE VIEW View_VictoryErgebnis AS
+SELECT
+    ss.SessionId,
+    ss.SpielerId,
+    b.Benutzername          AS Spieler,
+    ss.Punkte               AS ErreichtePunkte,
+    s.SessionName,
+    sz.Titel                AS SzenarioTitel,
+    st.AnzahlSiege,
+    st.ComplianceProzent,
+    st.LetzterSieg,
+    st.BestePunktzahl,
+    CASE
+        WHEN st.ComplianceProzent >= 70 THEN 'SIEG'
+        ELSE 'NIEDERLAGE'
+        END                     AS Ergebnis,
+    CONCAT(ss.Punkte, '/',
+           (SELECT COALESCE(SUM(k.Punkte), 0)
+            FROM Phase p
+                     JOIN Karte k ON p.PhaseId = k.PhaseId
+            WHERE p.SzenarioId = s.SzenarioID
+              AND k.KartenTyp != 'Reaktion')
+    )                       AS PunktAnzeige
+FROM SessionSpieler ss
+         JOIN Benutzer b    ON ss.SpielerId  = b.BenutzerId
+         JOIN Session s     ON ss.SessionId  = s.SessionID
+         JOIN Szenario sz   ON s.SzenarioID  = sz.SzenarioId
+         LEFT JOIN Statstik st ON ss.SpielerId = st.BenutzerId
+WHERE s.Status = 'Beendet';

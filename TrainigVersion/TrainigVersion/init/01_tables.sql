@@ -62,6 +62,12 @@ CREATE TABLE Statstik (
                           GesamtPunkte    INT      NOT NULL DEFAULT 0,
                           BestePunktzahl  INT      NOT NULL DEFAULT 0,
                           ErstelltAm      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          AnzahlSiege       INT      NOT NULL DEFAULT 0,    
+                          ComplianceProzent DECIMAL(5,2) NULL,              
+                          LetzterSieg       DATETIME NULL,
+                          AnzahlVersuche    INT          NOT NULL DEFAULT 0,  
+                          AnzahlSackgassen  INT          NOT NULL DEFAULT 0,  
+                          LetzterVersuch    DATETIME     NULL,                
                           PRIMARY KEY (StatstikId)
 );
 

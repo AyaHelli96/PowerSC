@@ -5,5 +5,5 @@ bin/
 bin/ 
 obj/ 
 .idea/ 
-appsettings.Development.json
-appsettings.Production.json
+.env
+
