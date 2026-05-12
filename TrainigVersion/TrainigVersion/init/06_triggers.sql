@@ -1,0 +1,130 @@
+USE cyberspace_nis2;
+ 
+-- =====================================
+-- TRIGGERS
+-- =====================================
+ 
+-- Min. eine richtige Option (US 1.2.1)
+DELIMITER $$
+CREATE TRIGGER TRG_MinEineRichtigeOption
+    AFTER INSERT ON `Option`
+    FOR EACH ROW
+BEGIN
+    DECLARE anzahlRichtig INT;
+    SELECT COUNT(*) INTO anzahlRichtig
+    FROM `Option` WHERE KarteId = NEW.KarteId AND IstRichtig = 1;
+
+    IF anzahlRichtig = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Mindestens eine Option muss korrekt sein!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- Reaktion keine Optionen (US 1.2.2)
+DELIMITER $$
+CREATE TRIGGER TRG_ReaktionKeineOptionen
+    BEFORE INSERT ON `Option`
+    FOR EACH ROW
+BEGIN
+    DECLARE kartenTyp VARCHAR(20);
+    SELECT KartenTyp INTO kartenTyp FROM Karte WHERE KarteId = NEW.KarteId;
+
+    IF kartenTyp = 'Reaktion' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Reaktion-Karten dürfen keine Optionen haben!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- Phase Start/End Karte verschieden (US 1.3.1)
+DELIMITER $$
+CREATE TRIGGER TRG_Phase_StartEndKarte
+    BEFORE INSERT ON Phase
+    FOR EACH ROW
+BEGIN
+    IF NEW.StartKarteId = NEW.EndKarteId AND NEW.StartKarteId IS NOT NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Start-Karte und End-Karte müssen verschieden sein!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- Phasen Reihenfolge ohne Lücken (US 1.3.1)
+DELIMITER $$
+CREATE TRIGGER TRG_Phase_Reihenfolge
+    BEFORE INSERT ON Phase
+    FOR EACH ROW
+BEGIN
+    DECLARE maxReihenfolge INT;
+    SELECT COALESCE(MAX(Reihenfolge), 0) INTO maxReihenfolge
+    FROM Phase WHERE SzenarioId = NEW.SzenarioId;
+
+    IF NEW.Reihenfolge != maxReihenfolge + 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Phasen-Reihenfolge darf keine Lücken haben!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- Min. 5 Rollen (US 1.4.1)
+DELIMITER $$
+CREATE TRIGGER TRG_Rollen_MinFuenf
+    BEFORE DELETE ON Rollen
+    FOR EACH ROW
+BEGIN
+    DECLARE anzahlRollen INT;
+    SELECT COUNT(*) INTO anzahlRollen FROM Rollen;
+
+    IF anzahlRollen <= 5 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Mindestens 5 Standard-Rollen müssen vorhanden sein!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- Keine doppelte Entscheidung (Sprint 4)
+DELIMITER $$
+CREATE TRIGGER TRG_KeineDoppelteEntscheidung
+    BEFORE INSERT ON Spielverlauf
+    FOR EACH ROW
+BEGIN
+    DECLARE bereitsGespielt INT;
+    SELECT COUNT(*) INTO bereitsGespielt
+    FROM Spielverlauf
+    WHERE SessionId = NEW.SessionId AND SpielerId = NEW.SpielerId AND KarteId = NEW.KarteId;
+
+    IF bereitsGespielt > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Diese Karte wurde bereits gespielt — keine Zurück-Möglichkeit!';
+END IF;
+END$$
+DELIMITER ;
+ 
+-- State Machine Session Status (US 2.2.3 - ST-2)
+DELIMITER $$
+CREATE TRIGGER TRG_SessionStateMachine
+    BEFORE UPDATE ON Session
+    FOR EACH ROW
+BEGIN
+    IF OLD.Status = 'Beendet' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Beendete Session kann nicht mehr geändert werden!';
+END IF;
+
+IF OLD.Status = 'Warten' AND NEW.Status NOT IN ('Aktiv', 'Beendet') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Warten kann nur zu Aktiv wechseln!';
+END IF;
+ 
+    IF OLD.Status = 'Aktiv' AND NEW.Status NOT IN ('Pausiert', 'Beendet') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Aktiv kann nur zu Pausiert oder Beendet wechseln!';
+END IF;
+ 
+    IF OLD.Status = 'Pausiert' AND NEW.Status NOT IN ('Aktiv', 'Beendet') THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Pausiert kann nur zu Aktiv oder Beendet wechseln!';
+END IF;
+END$$
+DELIMITER ;
