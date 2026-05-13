@@ -3,9 +3,8 @@ USE cyberspace_nis2;
 -- =====================================
 -- STORED PROCEDURES
 -- =====================================
- 
+
 -- Neuen Spieler registrieren
-DELIMITER $$
 CREATE PROCEDURE SP_SpielerRegistrieren(
     IN p_Benutzername VARCHAR(50),
     IN p_Email        VARCHAR(255),
@@ -14,11 +13,9 @@ CREATE PROCEDURE SP_SpielerRegistrieren(
 BEGIN
 INSERT INTO Benutzer (Benutzername, Email, PasswortHash, Rolle, FehlgeschlagenLogin, Punkte)
 VALUES (p_Benutzername, p_Email, p_PasswortHash, 'Spieler', 0, 0);
-END$$
-DELIMITER ;
- 
+END;
+
 -- Session starten (US 2.2.3 - ST-3)
-DELIMITER $$
 CREATE PROCEDURE SP_SessionStarten(
     IN p_SessionId INT
 )
@@ -47,15 +44,13 @@ INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
 SELECT p_SessionId, ModeratorID, 'SessionFortgesetzt', 'Session fortgesetzt'
 FROM Session WHERE SessionID = p_SessionId;
 END IF;
-
+ 
     -- Ergebnis zurückgeben
 SELECT SessionID, Status, Startzeit, FortsetzungsZeit
 FROM Session WHERE SessionID = p_SessionId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Session beenden (US 2.2.2 - ST-2)
-DELIMITER $$
 CREATE PROCEDURE SP_SessionBeenden(
     IN p_SessionId INT,
     IN p_Grund     VARCHAR(200)
@@ -74,11 +69,9 @@ FROM Session WHERE SessionID = p_SessionId;
 
 SELECT SessionID, Status, Endzeit, BeendigungsGrund
 FROM Session WHERE SessionID = p_SessionId;
-END$$
-DELIMITER ;
+END;
 
 -- Session pausieren (US 2.2.1 - ST-2)
-DELIMITER $$
 CREATE PROCEDURE SP_SessionPausieren(
     IN p_SessionId INT,
     IN p_Grund     VARCHAR(200)
@@ -95,11 +88,9 @@ INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
 SELECT p_SessionId, ModeratorID, 'SessionPausiert',
        CONCAT('Session pausiert. Grund: ', COALESCE(p_Grund, 'kein Grund'))
 FROM Session WHERE SessionID = p_SessionId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Session fortsetzen (US 2.2.3 - ST-3)
-DELIMITER $$
 CREATE PROCEDURE SP_SessionFortsetzen(
     IN p_SessionId INT
 )
@@ -115,11 +106,9 @@ WHERE SessionID = p_SessionId
 INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
 SELECT p_SessionId, ModeratorID, 'SessionFortgesetzt', 'Session fortgesetzt'
 FROM Session WHERE SessionID = p_SessionId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Protokoll Daten abrufen (US 2.1.1 - ST-4)
-DELIMITER $$
 CREATE PROCEDURE SP_ProtokollDaten(
     IN p_SessionId INT
 )
@@ -135,11 +124,9 @@ FROM Protokoll p
          JOIN Benutzer b ON p.BenutzerId = b.BenutzerId
 WHERE p.SessionId = p_SessionId
 ORDER BY p.Zeitstempel ASC;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Spieler zu Session hinzufügen
-DELIMITER $$
 CREATE PROCEDURE SP_SpielerHinzufuegen(
     IN p_SessionId INT,
     IN p_SpielerId INT
@@ -150,11 +137,9 @@ VALUES (p_SessionId, p_SpielerId, 'Aktiv', 0);
 
 INSERT INTO Protokoll (SessionId, BenutzerId, Aktion)
 VALUES (p_SessionId, p_SpielerId, 'Beigetreten');
-END$$
-DELIMITER ;
- 
+END;
+
 -- Punkte vergeben
-DELIMITER $$
 CREATE PROCEDURE SP_PunkteVergeben(
     IN p_SessionId INT,
     IN p_SpielerId INT,
@@ -172,11 +157,9 @@ WHERE BenutzerId = p_SpielerId;
 INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
 VALUES (p_SessionId, p_SpielerId, 'PunktErhalten',
         CONCAT('Punkte erhalten: ', p_Punkte));
-END$$
-DELIMITER ;
- 
+END;
+
 -- Login Versuch (US 0.2.1)
-DELIMITER $$
 CREATE PROCEDURE SP_LoginVersuch(
     IN p_Email  VARCHAR(255),
     IN p_Erfolg TINYINT(1)
@@ -192,11 +175,9 @@ WHERE Email = p_Email;
 UPDATE Benutzer SET GesperrtBis = DATE_ADD(NOW(), INTERVAL 5 MINUTE)
 WHERE Email = p_Email AND FehlgeschlagenLogin >= 3;
 END IF;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Karten Code generieren (US 1.2.1)
-DELIMITER $$
 CREATE PROCEDURE SP_KartenCodeGenerieren(
     IN  p_KartenTyp  VARCHAR(20),
     OUT p_KartenCode VARCHAR(10)
@@ -215,11 +196,9 @@ END;
 
 SELECT COUNT(*) + 1 INTO anzahl FROM Karte WHERE KartenTyp = p_KartenTyp;
 SET p_KartenCode = CONCAT(prefix, ':', LPAD(anzahl, 3, '0'));
-END$$
-DELIMITER ;
- 
+END;
+
 -- Szenario löschen (US 1.6.1)
-DELIMITER $$
 CREATE PROCEDURE SP_SzenarioLoeschen(
     IN p_SzenarioId INT
 )
@@ -233,22 +212,18 @@ IF aktuellerStatus = 'Aktiv' THEN
 ELSE
 DELETE FROM Szenario WHERE SzenarioId = p_SzenarioId;
 END IF;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Szenario veröffentlichen (US 1.6.1)
-DELIMITER $$
 CREATE PROCEDURE SP_SzenarioVeroeffentlichen(
     IN p_SzenarioId INT
 )
 BEGIN
 UPDATE Szenario SET Status = 'Aktiv'
 WHERE SzenarioId = p_SzenarioId AND Status = 'Entwurf';
-END$$
-DELIMITER ;
- 
+END;
+
 -- Aktive Szenarien prüfen
-DELIMITER $$
 CREATE PROCEDURE SP_AktiveSzenarienPruefen()
 BEGIN
     DECLARE anzahlAktiv INT;
@@ -258,11 +233,9 @@ IF anzahlAktiv = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Mindestens 1 aktives Szenario muss vorhanden sein!';
 END IF;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Option wählen
-DELIMITER $$
 CREATE PROCEDURE SP_OptionWaehlen(
     IN p_SessionId INT,
     IN p_SpielerId INT,
@@ -296,11 +269,9 @@ SELECT istRichtig AS IstRichtig,
        ss.Punkte AS GesamtPunkte
 FROM SessionSpieler ss
 WHERE ss.SessionId = p_SessionId AND ss.SpielerId = p_SpielerId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Phasen Fortschritt (Sprint 4)
-DELIMITER $$
 CREATE PROCEDURE SP_PhasenFortschritt(
     IN  p_SessionId          INT,
     IN  p_SpielerId          INT,
@@ -337,11 +308,9 @@ SET p_FortschrittProzent = ROUND(
 
 SELECT Punkte INTO p_AktuellePunkte
 FROM SessionSpieler WHERE SessionId = p_SessionId AND SpielerId = p_SpielerId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Erfolgs Punkte vergeben
-DELIMITER $$
 CREATE PROCEDURE SP_ErfolgsPunkteVergeben(
     IN p_SessionId INT,
     IN p_SpielerId INT,
@@ -363,11 +332,9 @@ VALUES (p_SessionId, p_SpielerId, 'PunktErhalten',
 SELECT ss.Punkte AS GesamtPunkte, p_Punkte AS ErhaltePunkte
 FROM SessionSpieler ss
 WHERE ss.SessionId = p_SessionId AND ss.SpielerId = p_SpielerId;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Rolle Szenario zuordnen
-DELIMITER $$
 CREATE PROCEDURE SP_RolleSzenarioZuordnen(
     IN p_RolleId    INT,
     IN p_SzenarioId INT
@@ -379,11 +346,9 @@ BEGIN
     ) THEN
         INSERT INTO SzenarioRolle (SzenarioId, RolleId) VALUES (p_SzenarioId, p_RolleId);
 END IF;
-END$$
-DELIMITER ;
- 
+END;
+
 -- Rolle vergeben (US 2.3.1)
-DELIMITER $$
 CREATE PROCEDURE SP_RolleVergeben(
     IN p_SessionId INT,
     IN p_SpielerId INT,
@@ -402,11 +367,9 @@ ELSE
 UPDATE SessionSpieler SET RolleId = p_RolleId
 WHERE SessionId = p_SessionId AND SpielerId = p_SpielerId;
 END IF;
-END$$
-DELIMITER ;
+END;
 
 -- Session Recovery (US 2.2.2 - ST-4)
-DELIMITER $$
 CREATE PROCEDURE SP_SessionRecovery(
     IN p_SessionId INT
 )
@@ -450,14 +413,12 @@ FROM Spielverlauf sv
          LEFT JOIN `Option` o ON sv.OptionId = o.OptionId
 WHERE sv.SessionId = p_SessionId
 ORDER BY sv.Zeitstempel ASC;
-END$$
-DELIMITER ;
+END;
 
 
 
 
 -- Victory Berechnen (US 3.3.1 - ST-2)
-DELIMITER $$
 CREATE PROCEDURE SP_VictoryBerechnen(
     IN  p_SessionId  INT,
     IN  p_SpielerId  INT,
@@ -468,7 +429,7 @@ BEGIN
     DECLARE erreichterPunkte INT;
     DECLARE maxPunkte        INT;
     DECLARE schwellwert      DECIMAL(5,2);
-
+ 
     -- Erreichte Punkte des Spielers
 SELECT COALESCE(SUM(ss.Punkte), 0) INTO erreichterPunkte
 FROM SessionSpieler ss
@@ -487,10 +448,10 @@ WHERE s.SessionID = p_SessionId
 SET p_Compliance = ROUND(
         (erreichterPunkte * 100.0) / NULLIF(maxPunkte, 0), 2
     );
-
+ 
     -- Sieg wenn >= 70%
     SET p_IstSieg = CASE WHEN p_Compliance >= 70 THEN 1 ELSE 0 END;
-
+ 
     -- Statistik aktualisieren
     IF p_IstSieg = 1 THEN
 UPDATE Statstik
@@ -500,12 +461,56 @@ SET AnzahlSiege       = AnzahlSiege + 1,
     BestePunktzahl    = GREATEST(BestePunktzahl, erreichterPunkte)
 WHERE BenutzerId = p_SpielerId;
 END IF;
-
+ 
     -- Ergebnis zurückgeben
 SELECT
     p_IstSieg           AS IstSieg,
     erreichterPunkte    AS ErreichtePunkte,
     maxPunkte           AS MaxPunkte,
     p_Compliance        AS ComplianceProzent;
-END$$
-DELIMITER ;
+END;
+
+CREATE PROCEDURE SP_GameOverVerarbeiten(
+    IN p_SessionId INT,
+    IN p_SpielerId INT,
+    IN p_Grund VARCHAR(50)
+)
+BEGIN
+    DECLARE v_AktuellePunkte INT;
+    DECLARE v_ComplianceProzent DECIMAL(5,2);
+    
+    -- 1. Hole aktuelle Punktzahl des Spielers aus der Session
+SELECT Punkte INTO v_AktuellePunkte
+FROM SessionSpieler
+WHERE SessionId = p_SessionId AND SpielerId = p_SpielerId;
+
+-- 2. Berechne Compliance-Prozentsatz (max 1000 Punkte = 100%)
+SET v_ComplianceProzent = (v_AktuellePunkte / 1000.0) * 100;
+    
+    -- 3. Update Statistiken
+UPDATE Statstik
+SET AnzahlVersuche = AnzahlVersuche + 1,
+    LetzterVersuch = NOW(),
+    ComplianceProzent = v_ComplianceProzent,
+    GesamtPunkte = GesamtPunkte + v_AktuellePunkte,
+    GespielteSpiele = GespielteSpiele + 1,
+    -- Update BestePunktzahl falls neue Punktzahl höher ist
+    BestePunktzahl = GREATEST(BestePunktzahl, v_AktuellePunkte)
+WHERE BenutzerId = p_SpielerId;
+
+-- 4. Setze Spieler-Status auf "Ausgeschieden"
+UPDATE SessionSpieler
+SET Status = 'Ausgeschieden'
+WHERE SessionId = p_SessionId AND SpielerId = p_SpielerId;
+
+-- 5. Logge Game Over Event im Protokoll
+INSERT INTO Protokoll (SessionId, BenutzerId, Aktion, Details)
+VALUES (
+           p_SessionId,
+           p_SpielerId,
+           'Gesperrt',
+           CONCAT('Game Over: ', p_Grund, ' | Punkte: ', v_AktuellePunkte, ' | Compliance: ', v_ComplianceProzent, '%')
+       );
+
+END;
+ 

@@ -128,3 +128,24 @@ END IF;
 END IF;
 END$$
 DELIMITER ;
+
+
+CREATE TRIGGER TRG_Sackgasse
+    AFTER INSERT ON Spielverlauf
+    FOR EACH ROW
+BEGIN
+    DECLARE karteReaktionsTyp VARCHAR(20);
+    
+    -- Hole den ReaktionsTyp der gespielten Karte
+    SELECT ReaktionsTyp INTO karteReaktionsTyp
+    FROM Karte
+    WHERE KarteId = NEW.KarteId;
+
+    -- Wenn Sackgasse erreicht
+    IF karteReaktionsTyp = 'Sackgasse' THEN
+    UPDATE Statstik
+    SET AnzahlSackgassen = AnzahlSackgassen + 1,
+        LetzterVersuch = NEW.Zeitstempel
+    WHERE BenutzerId = NEW.SpielerId;
+END IF;
+END;

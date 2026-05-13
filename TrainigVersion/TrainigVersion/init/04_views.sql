@@ -349,3 +349,54 @@ FROM SessionSpieler ss
          JOIN Szenario sz   ON s.SzenarioID  = sz.SzenarioId
          LEFT JOIN Statstik st ON ss.SpielerId = st.BenutzerId
 WHERE s.Status = 'Beendet';
+
+-- =====================================
+-- View_GameOverAnalyse (US 3.3.2 - ST-4)
+-- =====================================
+-- Zweck: Game Over Statistiken für jeden Spieler anzeigen
+-- Zeigt: Punktzahl, Compliance%, Versuche, Sackgassen, beste Punktzahl
+
+CREATE VIEW View_GameOverAnalyse AS
+SELECT
+    b.BenutzerId,
+    b.Benutzername,
+    b.Email,
+
+    -- Letzte Versuch-Daten
+    s.LetzterVersuch,
+    s.ComplianceProzent AS LetzteCompliance,
+
+    -- Versuchs-Statistiken
+    s.AnzahlVersuche AS GesamtVersuche,
+    s.AnzahlSackgassen,
+    s.AnzahlSiege,
+
+    -- Punkte-Statistiken
+    s.BestePunktzahl,
+    s.GesamtPunkte,
+    ROUND(s.GesamtPunkte / NULLIF(s.GespielteSpiele, 0), 0) AS DurchschnittPunkte,
+
+    -- Erfolgsquote
+    ROUND((s.AnzahlSiege * 100.0) / NULLIF(s.GespielteSpiele, 0), 2) AS Erfolgsquote,
+
+    -- Spiele-Statistiken
+    s.GespielteSpiele,
+
+    -- Verbesserungsbereiche (basierend auf letzter Compliance)
+    CASE
+        WHEN s.ComplianceProzent < 30 THEN 'Kritisch: Grundlagen NIS2 wiederholen'
+        WHEN s.ComplianceProzent < 50 THEN 'Verbesserungsbedarf: Incident Response trainieren'
+        WHEN s.ComplianceProzent < 70 THEN 'Gut: Feinabstimmung bei Compliance-Maßnahmen'
+        WHEN s.ComplianceProzent < 90 THEN 'Sehr gut: Details bei Meldepflichten beachten'
+        ELSE 'Exzellent: NIS2 Compliance erreicht'
+        END AS Verbesserungsbereich,
+
+    -- Status-Indikator
+    CASE
+        WHEN s.ComplianceProzent >= 70 THEN 'Bestanden'
+        ELSE 'Nicht bestanden'
+        END AS Status
+
+FROM Benutzer b
+         JOIN Statstik s ON b.BenutzerId = s.BenutzerId
+WHERE b.Rolle = 'Spieler';
