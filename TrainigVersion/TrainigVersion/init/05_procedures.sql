@@ -13,6 +13,8 @@ CREATE PROCEDURE SP_SpielerRegistrieren(
 BEGIN
 INSERT INTO Benutzer (Benutzername, Email, PasswortHash, Rolle, FehlgeschlagenLogin, Punkte)
 VALUES (p_Benutzername, p_Email, p_PasswortHash, 'Spieler', 0, 0);
+
+SELECT LAST_INSERT_ID() AS BenutzerId;
 END;
 
 -- Session starten (US 2.2.3 - ST-3)
