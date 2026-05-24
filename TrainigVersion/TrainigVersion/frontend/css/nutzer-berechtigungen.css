@@ -1,0 +1,173 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Nutzer-Berechtigungen (F-009) Styles
+ * Sprint 6 | US 0.3.1: Berechtigungen zuweisen (SCRUM-260 F-009 UI, 261 Letzter-Admin-Warnung)
+ *
+ * Header-Farbe: Rot (Admin-Bereich) | Mock-Up: Slide 13
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Header */
+.dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header--admin {
+    background-color: var(--color-danger);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Main */
+.dashboard-main {
+    padding: var(--spacing-xl);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.seiten-info {
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-lg);
+}
+
+/* Tabelle */
+.tabelle-container {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.nutzer-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.nutzer-tabelle thead tr {
+    background-color: #2C3E50;
+}
+
+.nutzer-tabelle th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-white);
+    white-space: nowrap;
+}
+
+.nutzer-tabelle tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.nutzer-tabelle tbody tr:last-child {
+    border-bottom: none;
+}
+
+.nutzer-tabelle td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: var(--font-size-body);
+    color: var(--color-text);
+}
+
+/* Rollen-Auswahl (Dropdown) in der Tabelle */
+.rolle-select {
+    padding: 0.4rem 0.6rem;
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-input-bg);
+    cursor: pointer;
+}
+
+/* Kleiner Ändern-Button */
+.aendern-btn {
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 0.4rem 0.9rem;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color var(--transition);
+}
+
+.aendern-btn:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Alert */
+.alert {
+    max-width: 1000px;
+    margin: 0 auto var(--spacing-lg);
+}
+
+/* Dialog (gleiche Optik wie Admin-Dashboard) */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.dialog {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 420px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.dialog__titel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+}
+
+.dialog__text {
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-xl);
+}
+
+.dialog__buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.dialog__buttons .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header { flex-direction: column; align-items: flex-start; }
+    .dashboard-main { padding: var(--spacing-md); }
+    .nutzer-tabelle th, .nutzer-tabelle td {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+}

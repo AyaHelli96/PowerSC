@@ -165,3 +165,85 @@ select.form-control {
 .vorschlag-chip:hover {
     background: rgba(52, 152, 219, 0.2);
 }
+
+/* ============================================================================
+ * Sprint 6 — Helfer für F-006 (Import), F-007 (Bearbeiten), F-008 (Export)
+ * ============================================================================ */
+
+/* Datei-Upload (F-006 Import) */
+.datei-upload {
+    border: 2px dashed var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    text-align: center;
+    background: var(--color-input-bg);
+}
+
+.datei-upload input[type="file"] {
+    margin-top: var(--spacing-sm);
+    font-family: var(--font-family);
+}
+
+/* Import-Ergebnis (Erfolg/Fehler-Box) */
+.import-ergebnis {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    display: none;
+}
+
+.import-ergebnis.show { display: block; }
+
+.import-ergebnis--erfolg {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: var(--color-green-dark);
+}
+
+.import-ergebnis--fehler {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: var(--color-red-dark);
+}
+
+/* Aktiv-Warnung (F-007 Bearbeiten) */
+.aktiv-warnung {
+    background: rgba(245, 166, 35, 0.12);
+    border-left: 4px solid var(--color-orange);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Versions-Historie (F-007 Bearbeiten) */
+.versions-historie {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.versions-historie__titel {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+}
+
+.historie-eintrag {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+}
+
+.historie-eintrag:last-child { border-bottom: none; }
+
+.historie-eintrag__zeit {
+    color: var(--color-text-light);
+    white-space: nowrap;
+}

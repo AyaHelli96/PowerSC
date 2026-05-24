@@ -1,0 +1,199 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Session-Details Styles
+ * Sprint 6 | US 2.1.2: Session-Details einsehen (SCRUM-269 Detail-Ansicht, 270 Status Farben)
+ *
+ * Header-Farbe: Blau (Moderator-Bereich)
+ * Spieler-Status: Aktiv (grün), Inaktiv (grau), Disconnected (rot)
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Header */
+.dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header--moderator {
+    background-color: var(--color-primary);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Main */
+.details-main {
+    padding: var(--spacing-xl);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Karten */
+.info-card,
+.liste-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-card {
+    padding: var(--spacing-xl);
+}
+
+.info-card__name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.info-card__szenario {
+    color: var(--color-text-light);
+    margin: var(--spacing-xs) 0 var(--spacing-lg);
+}
+
+/* Fortschritt */
+.fortschritt__kopf {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-xs);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-bar__fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 6px;
+    transition: width var(--transition);
+}
+
+/* Listen-Karten (Titel) */
+.liste-card__titel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* Tabelle */
+.liste-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.liste-tabelle thead tr {
+    background-color: #2C3E50;
+}
+
+.liste-tabelle th {
+    padding: var(--spacing-md) var(--spacing-xl);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+.liste-tabelle tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.liste-tabelle tbody tr:last-child {
+    border-bottom: none;
+}
+
+.liste-tabelle td {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-body);
+    color: var(--color-text);
+}
+
+/* Rollen-Punkt */
+.rollen-punkt {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: var(--spacing-sm);
+    vertical-align: middle;
+}
+
+/* Status-Punkt + Farben (ST-270) */
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.status__punkt {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.status--aktiv        { color: var(--color-green-dark); }
+.status--aktiv .status__punkt        { background: var(--color-green); }
+
+.status--inaktiv      { color: var(--color-muted); }
+.status--inaktiv .status__punkt      { background: var(--color-muted); }
+
+.status--disconnected { color: var(--color-red-dark); }
+.status--disconnected .status__punkt { background: var(--color-red); }
+
+/* Aktionen-Log */
+.aktion-eintrag {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--font-size-sm);
+}
+
+.aktion-eintrag:last-child {
+    border-bottom: none;
+}
+
+.aktion-eintrag__zeit {
+    color: var(--color-text-light);
+    white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header { flex-direction: column; align-items: flex-start; }
+    .details-main { padding: var(--spacing-md); }
+    .liste-tabelle th, .liste-tabelle td {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+    .aktion-eintrag { padding: var(--spacing-sm) var(--spacing-md); }
+}
