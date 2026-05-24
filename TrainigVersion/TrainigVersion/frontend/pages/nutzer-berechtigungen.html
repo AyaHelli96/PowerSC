@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-009: Nutzer-Berechtigungen — CyberSpace NIS2</title>
+
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/nutzer-berechtigungen.css">
+</head>
+<body>
+
+    <!-- Header (rot = Admin-Bereich) -->
+    <header class="dashboard-header dashboard-header--admin">
+        <h1 class="dashboard-header__title">👤 NUTZER-BERECHTIGUNGEN (F-009)</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--secondary" onclick="window.location.href='admin-dashboard.html'">
+                ← Zurück zum Dashboard
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <p class="seiten-info">
+            Hier kannst du die Berechtigung von Benutzern ändern.
+            Hierarchie: <strong>ADMINISTRATOR &gt; MODERATOR &gt; SPIELER</strong>.
+        </p>
+
+        <div id="alertSuccess" class="alert alert--success" role="alert"></div>
+
+        <div class="tabelle-container">
+            <table class="nutzer-tabelle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>E-Mail</th>
+                        <th>Registriert</th>
+                        <th>Berechtigung</th>
+                        <th>Aktion</th>
+                    </tr>
+                </thead>
+                <tbody id="nutzerBody">
+                    <!-- Zeilen werden per JavaScript erzeugt -->
+                </tbody>
+            </table>
+        </div>
+
+    </main>
+
+    <!-- Warnung: letzter Administrator -->
+    <div id="adminWarnung" class="dialog-overlay" style="display:none;">
+        <div class="dialog">
+            <h2 class="dialog__titel">⚠️ Letzter Administrator</h2>
+            <p class="dialog__text">
+                Du bist der letzte Administrator. Du kannst deine eigene Berechtigung
+                nicht herabstufen, sonst hätte das System keinen Admin mehr.
+            </p>
+            <div class="dialog__buttons">
+                <button class="btn btn--primary" onclick="warnungSchliessen()">Verstanden</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/nutzer-berechtigungen.js"></script>
+</body>
+</html>

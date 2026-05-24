@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-007: Szenario bearbeiten — CyberSpace NIS2</title>
+
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/formular.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card">
+
+            <!-- Header (rot = Admin-Bereich) -->
+            <div class="formular-card__header">
+                <h1 class="formular-card__title">F-007: SZENARIO BEARBEITEN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <div id="alertSuccess" class="alert alert--success" role="alert">
+                    Änderungen wurden gespeichert!
+                </div>
+                <div id="alertError" class="alert alert--danger" role="alert">
+                    <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+                </div>
+
+                <!-- Warnung bei aktivem Szenario (wird per JS eingeblendet) -->
+                <div id="aktivWarnung" class="aktiv-warnung" style="display:none;">
+                    ⚠️ Dieses Szenario ist <strong>aktiv</strong> und wird gerade verwendet.
+                    Änderungen können laufende Spiele beeinflussen.
+                </div>
+
+                <form id="bearbeitenForm" novalidate>
+
+                    <div class="form-group">
+                        <label for="szenarioTitel">Szenario-Titel *</label>
+                        <input type="text" id="szenarioTitel" class="form-control" required maxlength="100">
+                        <div class="invalid-feedback" id="titelError">
+                            Bitte geben Sie einen Titel ein (max. 100 Zeichen).
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="beschreibung">Beschreibung *</label>
+                        <textarea id="beschreibung" class="form-control textarea-control"
+                                  required maxlength="500" rows="3"></textarea>
+                        <div class="invalid-feedback" id="beschreibungError">
+                            Bitte geben Sie eine Beschreibung ein (max. 500 Zeichen).
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nis2Artikel">NIS2-Artikel *</label>
+                        <input type="text" id="nis2Artikel" class="form-control" required>
+                        <div class="invalid-feedback" id="nis2Error">
+                            Bitte geben Sie den NIS2-Artikel ein.
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="schwierigkeitsgrad">Schwierigkeitsgrad *</label>
+                            <select id="schwierigkeitsgrad" class="form-control" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Einfach">Einfach</option>
+                                <option value="Mittel">Mittel</option>
+                                <option value="Schwer">Schwer</option>
+                            </select>
+                            <div class="invalid-feedback" id="schwierigkeitError">
+                                Bitte wählen Sie einen Schwierigkeitsgrad.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="status">Status *</label>
+                            <select id="status" class="form-control" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Entwurf">Entwurf</option>
+                                <option value="Aktiv">Aktiv</option>
+                                <option value="Archiviert">Archiviert</option>
+                            </select>
+                            <div class="invalid-feedback" id="statusError">
+                                Bitte wählen Sie einen Status.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zielgruppe">Zielgruppe</label>
+                        <select id="zielgruppe" class="form-control">
+                            <option value="Alle">Alle</option>
+                            <option value="Führungskräfte">Führungskräfte</option>
+                            <option value="IT-Personal">IT-Personal</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dauer">Geschätzte Dauer (Min) *</label>
+                            <input type="number" id="dauer" class="form-control" required min="15" max="120">
+                            <div class="invalid-feedback" id="dauerError">
+                                Bitte geben Sie eine Dauer ein (15–120 Min).
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="anzahlPhasen">Anzahl Phasen *</label>
+                            <input type="number" id="anzahlPhasen" class="form-control" required min="1" max="10">
+                            <div class="invalid-feedback" id="phasenError">
+                                Bitte geben Sie 1–10 Phasen ein.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            Änderungen speichern
+                        </button>
+                    </div>
+
+                    <!-- Versions-Historie (ST-231) -->
+                    <div class="versions-historie">
+                        <h2 class="versions-historie__titel">📜 Versions-Historie</h2>
+                        <div id="historieListe">
+                            <!-- Einträge werden per JavaScript erzeugt -->
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/szenario-bearbeiten.js"></script>
+</body>
+</html>
