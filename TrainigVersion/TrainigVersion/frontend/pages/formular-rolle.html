@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-004: Spielrolle konfigurieren — CyberSpace NIS2</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Formular-spezifische Styles -->
+    <link rel="stylesheet" href="../css/formular.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card">
+
+            <!-- Header (rot = Admin-Bereich) -->
+            <div class="formular-card__header">
+                <h1 class="formular-card__title">F-004: SPIELROLLE KONFIGURIEREN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <!-- Meldungen -->
+                <div id="alertSuccess" class="alert alert--success" role="alert">
+                    Rolle wurde erfolgreich gespeichert!
+                </div>
+                <div id="alertError" class="alert alert--danger" role="alert">
+                    <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+                </div>
+
+                <!-- Hinweis: maximal 5 Rollen (TRG_5RollenSchutz) -->
+                <p class="formular-hinweis">
+                    Es sind maximal <strong>5 Standard-Rollen</strong> erlaubt.
+                </p>
+
+                <!-- Formular -->
+                <form id="rolleForm" novalidate>
+
+                    <!-- Rollen-Name -->
+                    <div class="form-group">
+                        <label for="rollenName">Rollen-Name *</label>
+                        <input type="text" id="rollenName" name="rollenName"
+                               class="form-control"
+                               placeholder="z.B. IT-Leitung"
+                               required
+                               maxlength="50">
+                        <div class="invalid-feedback" id="nameError">
+                            Bitte geben Sie einen Namen ein (max. 50 Zeichen).
+                        </div>
+                    </div>
+
+                    <!-- Beschreibung -->
+                    <div class="form-group">
+                        <label for="beschreibung">Beschreibung</label>
+                        <textarea id="beschreibung" name="beschreibung"
+                                  class="form-control textarea-control"
+                                  placeholder="Kurze Beschreibung der Rolle..."
+                                  maxlength="200"
+                                  rows="3"></textarea>
+                        <div class="invalid-feedback" id="beschreibungError">
+                            Maximal 200 Zeichen.
+                        </div>
+                    </div>
+
+                    <!-- Farbe + Vorschau -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="farbe">Farbe *</label>
+                            <select id="farbe" name="farbe" class="form-control" required
+                                    onchange="farbeAktualisieren()">
+                                <option value="">Bitte wählen...</option>
+                                <option value="Grau">Grau</option>
+                                <option value="Blau">Blau</option>
+                                <option value="Rot">Rot</option>
+                                <option value="Gruen">Grün</option>
+                                <option value="Lila">Lila</option>
+                            </select>
+                            <div class="invalid-feedback" id="farbeError">
+                                Bitte wählen Sie eine Farbe.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Vorschau</label>
+                            <div class="farb-vorschau">
+                                <span class="farb-punkt" id="farbPunkt" style="background:#E0E0E0;"></span>
+                                <span id="farbHexText">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            Speichern
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formular-Logik -->
+    <script src="../js/formular-rolle.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace NIS2 — Rolle auswählen</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Rollenauswahl-spezifische Styles -->
+    <link rel="stylesheet" href="../css/rollenauswahl.css">
+</head>
+<body>
+
+    <!-- Header (grün = Spieler-Bereich) -->
+    <header class="dashboard-header dashboard-header--spieler">
+        <h1 class="dashboard-header__title">🎭 ROLLE AUSWÄHLEN</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--secondary" onclick="window.location.href='spieler-dashboard.html'">
+                ← Zurück
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <p class="auswahl-info">
+            Wähle eine <strong>verfügbare Rolle</strong> für dieses Szenario.
+            Bereits vergebene Rollen sind ausgegraut.
+        </p>
+
+        <!-- Rollen-Raster (ST-5 Rollenauswahl Screen, ST-6 Rollen-Karte Design) -->
+        <div class="rollen-raster" id="rollenRaster">
+            <!-- Karten werden per JavaScript erzeugt -->
+        </div>
+
+    </main>
+
+    <!-- Bestätigung nach Auswahl (ST-7 Weiterleitung nach Wahl) -->
+    <div id="bestaetigung" class="bestaetigung-overlay" style="display:none;">
+        <div class="bestaetigung">
+            <span class="bestaetigung__icon">✅</span>
+            <h2 class="bestaetigung__titel">Rolle gewählt!</h2>
+            <p class="bestaetigung__text">
+                Du spielst als <strong id="gewaehlteRolle">—</strong>.<br>
+                Warte auf den Spielstart durch den Moderator...
+            </p>
+        </div>
+    </div>
+
+    <script src="../js/rollenauswahl.js"></script>
+</body>
+</html>
