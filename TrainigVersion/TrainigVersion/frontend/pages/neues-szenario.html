@@ -81,10 +81,9 @@
                                     class="form-control"
                                     required>
                                 <option value="">Bitte wählen...</option>
-                                <option value="Leicht">Leicht</option>
+                                <option value="Einfach">Einfach</option>
                                 <option value="Mittel">Mittel</option>
                                 <option value="Schwer">Schwer</option>
-                                <option value="Sehr Schwer">Sehr Schwer</option>
                             </select>
                             <div class="invalid-feedback" id="schwierigkeitError">
                                 Bitte wählen Sie einen Schwierigkeitsgrad.
@@ -98,7 +97,8 @@
                                     required>
                                 <option value="">Bitte wählen...</option>
                                 <option value="Entwurf">Entwurf</option>
-                                <option value="Veröffentlicht">Veröffentlicht</option>
+                                <option value="Aktiv">Aktiv</option>
+                                <option value="Archiviert">Archiviert</option>
                             </select>
                             <div class="invalid-feedback" id="statusError">
                                 Bitte wählen Sie einen Status.
@@ -106,12 +106,14 @@
                         </div>
                     </div>
 
-                    <!-- Zielgruppe -->
+                    <!-- Zielgruppe (passend zum ENUM in der Datenbank) -->
                     <div class="form-group">
                         <label for="zielgruppe">Zielgruppe</label>
-                        <input type="text" id="zielgruppe" name="zielgruppe"
-                               class="form-control"
-                               placeholder="z.B. CIO, CISO, CTO">
+                        <select id="zielgruppe" name="zielgruppe" class="form-control">
+                            <option value="Alle">Alle</option>
+                            <option value="Führungskräfte">Führungskräfte</option>
+                            <option value="IT-Personal">IT-Personal</option>
+                        </select>
                     </div>
 
                     <!-- Zwei Spalten: Dauer + Phasen -->

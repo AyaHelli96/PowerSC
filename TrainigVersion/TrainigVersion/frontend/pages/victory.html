@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace NIS2 — Sieg!</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Victory-spezifische Styles -->
+    <link rel="stylesheet" href="../css/victory.css">
+</head>
+<body>
+
+    <div class="ergebnis-bg ergebnis-bg--sieg">
+        <div class="ergebnis-box">
+
+            <!-- Trophy-Icon (120pt) -->
+            <span class="ergebnis-icon">🏆</span>
+
+            <!-- Überschrift -->
+            <h1 class="ergebnis-titel">SIEG!</h1>
+
+            <!-- Finale Punktzahl -->
+            <div class="ergebnis-punkte" id="ergebnisPunkte">0/0</div>
+
+            <!-- Compliance-Prozentsatz -->
+            <div class="ergebnis-compliance" id="ergebnisCompliance">0% NIS2-Compliance</div>
+
+            <!-- Gratulationstext -->
+            <p class="ergebnis-text">
+                Glückwunsch! Du hast den Sicherheitsvorfall erfolgreich nach NIS2
+                bewältigt und die nötige Compliance erreicht.
+            </p>
+
+            <!-- Buttons -->
+            <div class="ergebnis-buttons">
+                <button class="btn btn--secondary" onclick="statistiken()">
+                    📊 Statistiken ansehen
+                </button>
+                <button class="btn btn--success" onclick="neuesSpiel()">
+                    🔄 Neues Spiel starten
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../js/victory.js"></script>
+</body>
+</html>
