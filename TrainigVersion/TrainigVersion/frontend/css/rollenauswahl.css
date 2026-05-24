@@ -1,0 +1,196 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Rollenauswahl Styles
+ * Sprint 3 | US 2.3.1: Rolle auswählen/zuteilen
+ * SCRUM-131 (Rollenauswahl Screen), 132 (Rollen-Karte Design), 133 (Weiterleitung)
+ *
+ * Header-Farbe: Grün (Spieler-Bereich)
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Header (gleiche Basis wie Spieler-Dashboard) */
+.dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header--spieler {
+    background-color: var(--color-success);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Main */
+.dashboard-main {
+    padding: var(--spacing-xl);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.auswahl-info {
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-xl);
+}
+
+/* Rollen-Raster */
+.rollen-raster {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Einzelne Rollen-Karte */
+.rollen-karte {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-lg);
+    border-left: 6px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.rollen-karte--verfuegbar:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* Vergebene Rollen ausgrauen */
+.rollen-karte--vergeben {
+    opacity: 0.55;
+}
+
+.rollen-karte__kopf {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.rollen-punkt {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.rollen-karte__name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.rollen-karte__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-md);
+    flex: 1;
+}
+
+/* Status-Zeile */
+.rollen-status {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--spacing-md);
+}
+
+.rollen-status--verfuegbar {
+    color: var(--color-success);
+}
+
+.rollen-status--vergeben {
+    color: var(--color-muted);
+}
+
+/* Button am Ende der Karte */
+.rollen-karte .btn--block {
+    margin-top: auto;
+}
+
+.btn--success {
+    background: var(--color-success);
+}
+
+.btn--success:hover {
+    background: var(--color-green-dark);
+}
+
+/* Bestätigungs-Overlay (nach Auswahl) */
+.bestaetigung-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.bestaetigung {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xxl);
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.bestaetigung__icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-md);
+}
+
+.bestaetigung__titel {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+}
+
+.bestaetigung__text {
+    color: var(--color-text-light);
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-main {
+        padding: var(--spacing-md);
+    }
+
+    .rollen-raster {
+        grid-template-columns: 1fr;
+    }
+}
