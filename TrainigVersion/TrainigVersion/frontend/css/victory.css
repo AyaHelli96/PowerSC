@@ -1,0 +1,121 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Victory-Screen Styles
+ * Sprint 5 | US 3.3.1: Erfolgreichen Abschluss feiern (SCRUM-212 Victory Screen UI)
+ *
+ * Grüner Gradient-Hintergrund, Trophy-Icon, "SIEG!"
+ * Mock-Up: Slide 20
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Hintergrund mit grünem Gradient */
+.ergebnis-bg {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+.ergebnis-bg--sieg {
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
+}
+
+/* Ergebnis-Box (weiße Karte) */
+.ergebnis-box {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-xxl);
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Großes Icon (120pt) mit kleiner Feier-Animation */
+.ergebnis-icon {
+    font-size: 120px;
+    line-height: 1;
+    display: block;
+    margin-bottom: var(--spacing-md);
+    animation: huepfen 1s ease infinite;
+}
+
+@keyframes huepfen {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-12px); }
+    100% { transform: translateY(0); }
+}
+
+/* Überschrift (60pt) */
+.ergebnis-titel {
+    font-size: 60px;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    margin: 0 0 var(--spacing-md);
+    letter-spacing: 2px;
+}
+
+/* Finale Punktzahl */
+.ergebnis-punkte {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Compliance-Prozentsatz */
+.ergebnis-compliance {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-green-dark);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Text */
+.ergebnis-text {
+    font-size: 1rem;
+    color: var(--color-text-light);
+    line-height: 1.6;
+    margin: 0 0 var(--spacing-xl);
+}
+
+/* Buttons */
+.ergebnis-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ergebnis-buttons .btn {
+    flex: 1;
+    min-width: 200px;
+}
+
+.btn--success {
+    background: var(--color-success);
+}
+
+.btn--success:hover {
+    background: var(--color-green-dark);
+}
+
+/* Sekundärer Button auf hellem Hintergrund lesbar machen */
+.ergebnis-box .btn--secondary {
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.ergebnis-box .btn--secondary:hover {
+    background: var(--color-border);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .ergebnis-box { padding: var(--spacing-xl); }
+    .ergebnis-icon { font-size: 90px; }
+    .ergebnis-titel { font-size: 44px; }
+    .ergebnis-punkte { font-size: 2rem; }
+    .ergebnis-buttons .btn { width: 100%; }
+}
