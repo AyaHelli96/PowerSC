@@ -90,3 +90,11 @@ select.form-control {
     .formular-buttons { flex-direction: column-reverse; }
     .formular-buttons .btn { width: 100%; text-align: center; }
 }
+
+/* ============================================================================
+ * Sprint 3 — Moderator-Variante (additive Erweiterung)
+ * Blauer Header für Session-Formulare (Moderator-Bereich), z.B. F-010 Session
+ * ============================================================================ */
+.formular-card__header--moderator {
+    background-color: var(--color-primary);
+}
