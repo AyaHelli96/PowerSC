@@ -477,3 +477,39 @@ FROM BerechtigungsLog bl
          JOIN Benutzer b ON bl.BenutzerId = b.BenutzerID
          JOIN Benutzer admin ON bl.GeaendertVon = admin.BenutzerID
 ORDER BY bl.GeaendertAm DESC;
+
+
+-- Session Details (US 2.1.2 - ST-1)
+CREATE VIEW View_SessionDetails AS
+SELECT
+    s.SessionId,
+    s.SessionName,
+    s.Status AS SessionStatus,
+    s.StartZeit,
+    s.PausierZeit,
+    s.FortsetzungsZeit,
+    sz.Titel AS SzenarioTitel,
+    sz.Schwierigkeit,
+    m.Benutzername AS ModeratorName,
+    COUNT(DISTINCT ss.SpielerId) AS AnzahlSpieler,
+    AVG(ss.Punkte) AS DurchschnittsPunkte
+FROM Session s
+         JOIN Szenario sz ON s.SzenarioId = sz.SzenarioId
+         JOIN Benutzer m ON s.ModeratorId = m.BenutzerID
+         LEFT JOIN SessionSpieler ss ON s.SessionId = ss.SessionId
+GROUP BY s.SessionId, s.SessionName, s.Status, s.StartZeit, s.PausierZeit,
+         s.FortsetzungsZeit, sz.Titel, sz.Schwierigkeit, m.Benutzername;
+
+-- Letzte Aktionen (US 2.1.2 - ST-2)
+CREATE VIEW View_LetzteAktionen AS
+SELECT
+    p.ProtokollId AS AktionId,
+    p.SessionId,
+    p.Zeitstempel,
+    b.Benutzername AS Spieler,
+    p.Aktion AS AktionTyp,
+    p.Details AS AktionDetails,
+    'Protokoll' AS Quelle
+FROM Protokoll p
+         JOIN Benutzer b ON p.BenutzerId = b.BenutzerID
+ORDER BY p.Zeitstempel DESC;

@@ -716,6 +716,49 @@ VALUES (p_BenutzerId, alteRolle, p_NeueRolle, p_AdminId);
 -- Ergebnis zurückgeben
 SELECT BenutzerID, Benutzername, Rolle FROM Benutzer WHERE BenutzerID = p_BenutzerId;
 END //
+
+-- Session Details laden (US 2.1.2 - ST-3)
+CREATE PROCEDURE SP_SessionDetailsLaden(
+    IN p_SessionId INT
+)
+BEGIN
+    -- Result Set 1: Session-Übersicht
+SELECT * FROM View_SessionDetails WHERE SessionId = p_SessionId;
+
+-- Result Set 2: Spieler-Liste mit Rollen und Status
+SELECT
+    ss.SpielerId,
+    b.Benutzername,
+    r.Rollenname,
+    ss.Punkte,
+    ss.Status,
+    ss.LetzteAktivitaet
+FROM SessionSpieler ss
+         JOIN Benutzer b ON ss.SpielerId = b.BenutzerID
+         JOIN Rollen r ON ss.RolleId = r.RolleId
+WHERE ss.SessionId = p_SessionId
+ORDER BY ss.Punkte DESC;
+
+-- Result Set 3: Phasen-Fortschritt
+SELECT
+    p.PhaseId,
+    p.Titel,
+    p.Reihenfolge,
+    COUNT(DISTINCT sv.KarteId) AS GespielteKarten
+FROM Phase p
+         JOIN Session s ON p.SzenarioId = s.SzenarioId
+         LEFT JOIN Spielverlauf sv ON sv.SessionId = s.SessionId
+WHERE s.SessionId = p_SessionId
+GROUP BY p.PhaseId, p.Titel, p.Reihenfolge
+ORDER BY p.Reihenfolge;
+
+-- Result Set 4: Letzte 10 Aktionen
+SELECT * FROM View_LetzteAktionen
+WHERE SessionId = p_SessionId
+ORDER BY Zeitstempel DESC
+    LIMIT 10;
+END //
+    
     
     DELIMITER ;
  

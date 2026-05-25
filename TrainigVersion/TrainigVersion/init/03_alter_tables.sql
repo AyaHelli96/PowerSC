@@ -58,3 +58,15 @@ CREATE TABLE BerechtigungsLog (
                                   FOREIGN KEY (BenutzerId) REFERENCES Benutzer(BenutzerID),
                                   FOREIGN KEY (GeaendertVon) REFERENCES Benutzer(BenutzerID)
 ) COMMENT = 'Speichert alle Berechtigungs-Änderungen für Audit-Trail';
+
+-- Session-Spieler Status (US 2.1.2)
+ALTER TABLE SessionSpieler
+    ADD COLUMN Status ENUM('Aktiv','Inaktiv','Disconnected') 
+DEFAULT 'Aktiv' 
+COMMENT 'Live-Status des Spielers: Aktiv (online), Inaktiv (pausiert), Disconnected (Verbindung verloren)';
+
+ALTER TABLE SessionSpieler
+    ADD COLUMN LetzteAktivitaet DATETIME
+        DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP
+    COMMENT 'Letzter Zeitpunkt an dem Spieler eine Aktion durchgeführt hat';
