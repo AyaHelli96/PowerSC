@@ -677,7 +677,45 @@ FROM SzenarioRolle sr
          JOIN Rollen r ON sr.RolleId = r.RolleId
 WHERE sr.SzenarioId = p_SzenarioId;
 END //
+
+-- Berechtigung ändern (US 0.3.1 - ST-2)
+CREATE PROCEDURE SP_BerechtigungAendern(
+    IN p_BenutzerId INT,
+    IN p_NeueRolle ENUM('Spieler','Moderator','Administrator'),
+    IN p_AdminId INT
+        )
+BEGIN
+    DECLARE alteRolle VARCHAR(20);
+    DECLARE adminRolle VARCHAR(20);
+    DECLARE anzahlAdmins INT;
     
+    -- Prüfe: Ist ausführender Benutzer Admin?
+SELECT Rolle INTO adminRolle FROM Benutzer WHERE BenutzerID = p_AdminId;
+IF adminRolle != 'Administrator' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nur Administratoren können Berechtigungen ändern!';
+END IF;
+    
+    -- Hole aktuelle Rolle
+SELECT Rolle INTO alteRolle FROM Benutzer WHERE BenutzerID = p_BenutzerId;
+
+-- Prüfe: Letzter Admin-Schutz
+IF alteRolle = 'Administrator' AND p_NeueRolle != 'Administrator' THEN
+SELECT COUNT(*) INTO anzahlAdmins FROM Benutzer WHERE Rolle = 'Administrator';
+IF anzahlAdmins <= 1 THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Der letzte Administrator kann nicht herabgestuft werden!';
+END IF;
+END IF;
+    
+    -- Rolle ändern
+UPDATE Benutzer SET Rolle = p_NeueRolle WHERE BenutzerID = p_BenutzerId;
+
+-- Log-Eintrag erstellen
+INSERT INTO BerechtigungsLog (BenutzerId, AlteRolle, NeueRolle, GeaendertVon)
+VALUES (p_BenutzerId, alteRolle, p_NeueRolle, p_AdminId);
+
+-- Ergebnis zurückgeben
+SELECT BenutzerID, Benutzername, Rolle FROM Benutzer WHERE BenutzerID = p_BenutzerId;
+END //
     
     DELIMITER ;
  

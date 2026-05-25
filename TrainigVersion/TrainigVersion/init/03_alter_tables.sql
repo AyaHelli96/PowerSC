@@ -47,3 +47,14 @@ CREATE TABLE ExportLog (
                            FOREIGN KEY (ExportiertVon) REFERENCES Benutzer(BenutzerID)
 ) COMMENT = 'Speichert alle Export-Vorgänge für Nachvollziehbarkeit und Backup-Tracking';
 
+-- Berechtigungs-Log (US 0.3.1)
+CREATE TABLE BerechtigungsLog (
+                                  LogId            INT PRIMARY KEY AUTO_INCREMENT,
+                                  BenutzerId       INT NOT NULL COMMENT 'Benutzer dessen Berechtigung geändert wurde',
+                                  AlteRolle        ENUM('Spieler','Moderator','Administrator') NOT NULL,
+                                  NeueRolle        ENUM('Spieler','Moderator','Administrator') NOT NULL,
+                                  GeaendertVon     INT NOT NULL COMMENT 'Admin der die Änderung durchgeführt hat',
+                                  GeaendertAm      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  FOREIGN KEY (BenutzerId) REFERENCES Benutzer(BenutzerID),
+                                  FOREIGN KEY (GeaendertVon) REFERENCES Benutzer(BenutzerID)
+) COMMENT = 'Speichert alle Berechtigungs-Änderungen für Audit-Trail';

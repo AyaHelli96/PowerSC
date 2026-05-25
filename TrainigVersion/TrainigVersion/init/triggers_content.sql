@@ -143,7 +143,25 @@ BEGIN
                  OLD.Schwierigkeit, OLD.Status, NEW.ErstelltVon, CURRENT_TIMESTAMP
              );
 END //
+-- Letzter Admin Schutz (US 0.3.1 - ST-3)
+CREATE TRIGGER TRG_LetzterAdminSchutz
+    BEFORE UPDATE ON Benutzer
+    FOR EACH ROW
+BEGIN
+    DECLARE anzahlAdmins INT;
     
+    -- Nur wenn Admin herabgestuft wird
+    IF OLD.Rolle = 'Administrator' AND NEW.Rolle != 'Administrator' THEN
+    SELECT COUNT(*) INTO anzahlAdmins
+    FROM Benutzer
+    WHERE Rolle = 'Administrator' AND BenutzerID != OLD.BenutzerID;
+
+    IF anzahlAdmins = 0 THEN
+            SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'Der letzte Administrator kann nicht herabgestuft werden!';
+END IF;
+END IF;
+END //
     
     
     

@@ -451,3 +451,29 @@ FROM ExportLog el
          JOIN Szenario s ON el.SzenarioId = s.SzenarioId
          JOIN Benutzer b ON el.ExportiertVon = b.BenutzerID
 ORDER BY el.ExportZeitpunkt DESC;
+
+-- Benutzer Übersicht (US 0.3.1 - ST-4)
+CREATE VIEW View_BenutzerUebersicht AS
+SELECT
+    BenutzerID,
+    Benutzername,
+    Email,
+    Rolle,
+    RegistriertAm
+FROM Benutzer
+ORDER BY Rolle DESC, Benutzername ASC;
+
+-- Berechtigungs-Log Historie (US 0.3.1 - ST-5)
+CREATE VIEW View_BerechtigungsLog AS
+SELECT
+    bl.LogId,
+    b.Benutzername AS BetroffenerBenutzer,
+    b.Email AS BetroffenerEmail,
+    bl.AlteRolle,
+    bl.NeueRolle,
+    admin.Benutzername AS GeaendertVon,
+    bl.GeaendertAm
+FROM BerechtigungsLog bl
+         JOIN Benutzer b ON bl.BenutzerId = b.BenutzerID
+         JOIN Benutzer admin ON bl.GeaendertVon = admin.BenutzerID
+ORDER BY bl.GeaendertAm DESC;
