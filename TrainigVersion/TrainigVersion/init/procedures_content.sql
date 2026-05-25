@@ -611,5 +611,73 @@ SET Status = 'Fehlgeschlagen',
 WHERE ImportId = p_ImportId;
 END IF;
 END //
+
+-- Export vorbereiten (US 1.5.2 - ST-2)
+CREATE PROCEDURE SP_ExportVorbereiten(
+    IN p_BenutzerID INT,
+    IN p_SzenarioId INT,
+    OUT p_ExportId INT,
+    OUT p_IstAdmin BOOLEAN,
+    OUT p_DateiName VARCHAR(255)
+)
+BEGIN
+    DECLARE benutzerRolle VARCHAR(20);
+    DECLARE szenarioTitel VARCHAR(100);
+    DECLARE exportDatum VARCHAR(20);
+    
+    -- Rolle prüfen
+SELECT Rolle INTO benutzerRolle FROM Benutzer WHERE BenutzerID = p_BenutzerID;
+
+IF benutzerRolle = 'Administrator' THEN
+        SET p_IstAdmin = TRUE;
+        
+        -- Szenario-Titel und Datum für Dateiname
+SELECT Titel INTO szenarioTitel FROM Szenario WHERE SzenarioId = p_SzenarioId;
+SET exportDatum = DATE_FORMAT(NOW(), '%Y%m%d');
+        SET p_DateiName = CONCAT(szenarioTitel, '_', exportDatum, '.json');
+        
+        -- Export-Log-Eintrag erstellen
+INSERT INTO ExportLog (SzenarioId, ExportiertVon, DateiName)
+VALUES (p_SzenarioId, p_BenutzerID, p_DateiName);
+
+SET p_ExportId = LAST_INSERT_ID();
+ELSE
+        SET p_IstAdmin = FALSE;
+        SET p_ExportId = NULL;
+        SET p_DateiName = NULL;
+END IF;
+END //
+
+-- Szenario Export Daten (US 1.5.2 - ST-3)
+CREATE PROCEDURE SP_SzenarioExportDaten(
+    IN p_SzenarioId INT
+)
+BEGIN
+    -- 1. Szenario-Metadaten
+SELECT SzenarioId, Titel, Beschreibung, Schwierigkeit, Status, ErstelltAm
+FROM Szenario WHERE SzenarioId = p_SzenarioId;
+
+-- 2. Alle Karten mit Optionen
+SELECT k.KarteId, k.KartenTyp, k.KartenCode, k.Titel, k.Beschreibung,
+       k.ReaktionsTyp, k.Punkte, k.VorherigeKarteId,
+       o.OptionId, o.OptionText, o.IstRichtig, o.NaechsteKarteId
+FROM Karte k
+         LEFT JOIN `Option` o ON k.KarteId = o.KarteId
+WHERE k.SzenarioId = p_SzenarioId
+ORDER BY k.KarteId, o.OptionId;
+
+-- 3. Alle Phasen
+SELECT PhaseId, Titel, Beschreibung, Reihenfolge, StartKarteId, EndKarteId
+FROM Phase WHERE SzenarioId = p_SzenarioId
+ORDER BY Reihenfolge;
+
+-- 4. Alle zugeordneten Rollen
+SELECT sr.RolleId, r.Rollenname, r.Beschreibung
+FROM SzenarioRolle sr
+         JOIN Rollen r ON sr.RolleId = r.RolleId
+WHERE sr.SzenarioId = p_SzenarioId;
+END //
+    
+    
     DELIMITER ;
  

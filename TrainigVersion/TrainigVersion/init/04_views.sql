@@ -439,3 +439,15 @@ FROM ImportLog il
          LEFT JOIN Szenario s ON il.SzenarioId = s.SzenarioId
 ORDER BY il.ImportZeitpunkt DESC;
 
+-- Export Historie (US 1.5.2 - ST-4)
+CREATE VIEW View_ExportHistory AS
+SELECT
+    el.ExportId,
+    el.DateiName,
+    s.Titel AS SzenarioTitel,
+    b.Benutzername AS ExportiertVon,
+    el.ExportZeitpunkt
+FROM ExportLog el
+         JOIN Szenario s ON el.SzenarioId = s.SzenarioId
+         JOIN Benutzer b ON el.ExportiertVon = b.BenutzerID
+ORDER BY el.ExportZeitpunkt DESC;
