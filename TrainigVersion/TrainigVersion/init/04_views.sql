@@ -400,3 +400,23 @@ SELECT
 FROM Benutzer b
          JOIN Statstik s ON b.BenutzerId = s.BenutzerId
 WHERE b.Rolle = 'Spieler';
+
+-- -----
+-- Szenario Versionshistorie (US 1.1.2 - ST-3) Sprint 6 
+CREATE VIEW View_SzenarioVersionHistory AS
+SELECT
+    sv.VersionId,
+    sv.SzenarioId,
+    s.Titel AS AktuellerTitel,
+    sv.VersionNummer,
+    sv.Titel AS AlterTitel,
+    sv.Beschreibung AS AlteBeschreibung,
+    sv.Schwierigkeit AS AlteSchwierigkeit,
+    sv.Status AS AlterStatus,
+    b.Benutzername AS GeaendertVon,
+    sv.GeaendertAm,
+    sv.Aenderungsgrund
+FROM SzenarioVersion sv
+         JOIN Szenario s ON sv.SzenarioId = s.SzenarioId
+         JOIN Benutzer b ON sv.GeaendertVon = b.BenutzerID
+ORDER BY sv.SzenarioId, sv.VersionNummer DESC;

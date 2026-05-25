@@ -517,5 +517,45 @@ VALUES (
        );
 
 END //
+
+-- Szenario bearbeiten (US 1.1.2 - ST-4)
+CREATE PROCEDURE SP_SzenarioBearbeiten(
+    IN p_SzenarioId     INT,
+    IN p_Titel          VARCHAR(100),
+    IN p_Beschreibung   TEXT,
+    IN p_Schwierigkeit  ENUM('Leicht','Mittel','Schwer'),
+    IN p_BearbeiterID   INT,
+    IN p_Aenderungsgrund VARCHAR(200)
+        )
+BEGIN
+    DECLARE aktuellerStatus VARCHAR(20);
+    
+    -- Status prüfen
+SELECT Status INTO aktuellerStatus FROM Szenario WHERE SzenarioId = p_SzenarioId;
+
+-- Warnung wenn aktiv (aber nicht blockieren)
+IF aktuellerStatus = 'Aktiv' THEN
+SELECT 'WARNUNG: Dieses Szenario ist aktiv und wird gerade verwendet!' AS Warnung;
+END IF;
+    
+    -- Szenario aktualisieren (Trigger speichert automatisch alte Version)
+UPDATE Szenario
+SET Titel = p_Titel,
+    Beschreibung = p_Beschreibung,
+    Schwierigkeit = p_Schwierigkeit
+WHERE SzenarioId = p_SzenarioId;
+
+-- Aenderungsgrund in letzter Version speichern
+UPDATE SzenarioVersion
+SET Aenderungsgrund = p_Aenderungsgrund
+WHERE SzenarioId = p_SzenarioId
+    ORDER BY VersionNummer DESC 
+    LIMIT 1;
+
+-- Ergebnis zurückgeben
+SELECT SzenarioId, Titel, Beschreibung, Schwierigkeit, Status
+FROM Szenario WHERE SzenarioId = p_SzenarioId;
+END //
+    
     DELIMITER ;
  

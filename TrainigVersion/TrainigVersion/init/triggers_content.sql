@@ -122,4 +122,27 @@ BEGIN
     UPDATE Statstik SET AnzahlSackgassen = AnzahlSackgassen + 1, LetzterVersuch = NEW.Zeitstempel WHERE BenutzerId = NEW.SpielerId;
 END IF;
 END //
+
+-- Szenario Versionierung (US 1.1.2 - ST-2)
+CREATE TRIGGER TRG_SzenarioVersionierung
+    BEFORE UPDATE ON Szenario
+    FOR EACH ROW
+BEGIN
+    DECLARE naechsteVersion INT;
+    
+    -- Berechne nächste Versionsnummer
+    SELECT COALESCE(MAX(VersionNummer), 0) + 1 INTO naechsteVersion
+    FROM SzenarioVersion WHERE SzenarioId = OLD.SzenarioId;
+
+    -- Speichere alte Version
+    INSERT INTO SzenarioVersion (
+        SzenarioId, VersionNummer, Titel, Beschreibung,
+        Schwierigkeit, Status, GeaendertVon, GeaendertAm
+    ) VALUES (
+                 OLD.SzenarioId, naechsteVersion, OLD.Titel, OLD.Beschreibung,
+                 OLD.Schwierigkeit, OLD.Status, NEW.ErstelltVon, CURRENT_TIMESTAMP
+             );
+END //
+    
+    
     DELIMITER ;
