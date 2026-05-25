@@ -19,3 +19,19 @@ CREATE TABLE SzenarioVersion (
                                  FOREIGN KEY (SzenarioId) REFERENCES Szenario(SzenarioId) ON DELETE CASCADE,
                                  FOREIGN KEY (GeaendertVon) REFERENCES Benutzer(BenutzerID)
 ) COMMENT = 'Speichert alle Versionen eines Szenarios für Änderungshistorie';
+
+-- Import Log (US 1.5.1)
+CREATE TABLE ImportLog (
+                           ImportId         INT PRIMARY KEY AUTO_INCREMENT,
+                           SzenarioId       INT NULL COMMENT 'NULL wenn Import fehlgeschlagen',
+                           ImportiertVon    INT NOT NULL COMMENT 'Admin BenutzerID',
+                           ImportZeitpunkt  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           DateiName        VARCHAR(255) NOT NULL,
+                           AnzahlKarten     INT DEFAULT 0,
+                           AnzahlPhasen     INT DEFAULT 0,
+                           AnzahlRollen     INT DEFAULT 0,
+                           Status           ENUM('Erfolgreich','Fehlgeschlagen') NOT NULL,
+                           Fehlermeldung    TEXT NULL COMMENT 'Bei Fehler: Details',
+                           FOREIGN KEY (SzenarioId) REFERENCES Szenario(SzenarioId) ON DELETE SET NULL,
+                           FOREIGN KEY (ImportiertVon) REFERENCES Benutzer(BenutzerID)
+) COMMENT = 'Speichert alle Import-Vorgänge für Nachvollziehbarkeit';

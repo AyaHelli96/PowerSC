@@ -556,6 +556,60 @@ WHERE SzenarioId = p_SzenarioId
 SELECT SzenarioId, Titel, Beschreibung, Schwierigkeit, Status
 FROM Szenario WHERE SzenarioId = p_SzenarioId;
 END //
+
+-- Import vorbereiten (US 1.5.1 - ST-2)
+CREATE PROCEDURE SP_ImportVorbereiten(
+    IN p_BenutzerID INT,
+    IN p_DateiName VARCHAR(255),
+    OUT p_ImportId INT,
+    OUT p_IstAdmin BOOLEAN
+)
+BEGIN
+    DECLARE benutzerRolle VARCHAR(20);
     
+    -- Rolle prüfen
+SELECT Rolle INTO benutzerRolle FROM Benutzer WHERE BenutzerID = p_BenutzerID;
+
+IF benutzerRolle = 'Administrator' THEN
+        SET p_IstAdmin = TRUE;
+        
+        -- Import-Log-Eintrag erstellen (Status wird später aktualisiert)
+INSERT INTO ImportLog (ImportiertVon, DateiName, Status)
+VALUES (p_BenutzerID, p_DateiName, 'Fehlgeschlagen');
+
+SET p_ImportId = LAST_INSERT_ID();
+ELSE
+        SET p_IstAdmin = FALSE;
+        SET p_ImportId = NULL;
+END IF;
+END //
+
+-- Import abschliessen (US 1.5.1 - ST-3)
+CREATE PROCEDURE SP_ImportAbschliessen(
+    IN p_ImportId INT,
+    IN p_SzenarioId INT,
+    IN p_AnzahlKarten INT,
+    IN p_AnzahlPhasen INT,
+    IN p_AnzahlRollen INT,
+    IN p_IstErfolgreich BOOLEAN,
+    IN p_Fehlermeldung TEXT
+)
+BEGIN
+    IF p_IstErfolgreich THEN
+UPDATE ImportLog
+SET SzenarioId = p_SzenarioId,
+    AnzahlKarten = p_AnzahlKarten,
+    AnzahlPhasen = p_AnzahlPhasen,
+    AnzahlRollen = p_AnzahlRollen,
+    Status = 'Erfolgreich',
+    Fehlermeldung = NULL
+WHERE ImportId = p_ImportId;
+ELSE
+UPDATE ImportLog
+SET Status = 'Fehlgeschlagen',
+    Fehlermeldung = p_Fehlermeldung
+WHERE ImportId = p_ImportId;
+END IF;
+END //
     DELIMITER ;
  

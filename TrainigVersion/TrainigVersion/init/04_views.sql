@@ -420,3 +420,22 @@ FROM SzenarioVersion sv
          JOIN Szenario s ON sv.SzenarioId = s.SzenarioId
          JOIN Benutzer b ON sv.GeaendertVon = b.BenutzerID
 ORDER BY sv.SzenarioId, sv.VersionNummer DESC;
+
+-- Import Historie (US 1.5.1 - ST-4)
+CREATE VIEW View_ImportHistory AS
+SELECT
+    il.ImportId,
+    il.DateiName,
+    b.Benutzername AS ImportiertVon,
+    il.ImportZeitpunkt,
+    il.Status,
+    s.Titel AS SzenarioTitel,
+    il.AnzahlKarten,
+    il.AnzahlPhasen,
+    il.AnzahlRollen,
+    il.Fehlermeldung
+FROM ImportLog il
+         JOIN Benutzer b ON il.ImportiertVon = b.BenutzerID
+         LEFT JOIN Szenario s ON il.SzenarioId = s.SzenarioId
+ORDER BY il.ImportZeitpunkt DESC;
+
