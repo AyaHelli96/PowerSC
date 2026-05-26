@@ -1,0 +1,228 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Spielrunde (Game-Card + Reactio-Feedback)
+ * Sprint 4 | US 3.2.1 Entscheidungen treffen, 3.2.2 Erfolgsfeedback, 3.2.3 Fehlerfeedback
+ * SCRUM-151 (Game-Card UI), 152 (Feedback UI), 159 (Success-Screen),
+ *           160 (Auto-Timer), 166 (Error-Screen), 167 (Sound)
+ *
+ * Feedback-Farben (Reactio): Grün (positiv), Rot (negativ),
+ * Orange (Wiederherstellung), Grau (Sackgasse)
+ * Mock-Up: Slides 17/18/19
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Layout */
+.spiel-main {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+}
+
+/* Game-Card */
+.game-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    max-width: 640px;
+    padding: var(--spacing-xl);
+}
+
+.game-card__kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.phase-indicator {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-primary);
+    background: rgba(52, 152, 219, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+}
+
+.punkte-anzeige {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* Fortschrittsbalken */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: var(--color-border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-lg);
+}
+
+.progress-bar__fill {
+    height: 100%;
+    background: var(--color-primary);
+    border-radius: 5px;
+    transition: width var(--transition);
+}
+
+/* Szenario-Text */
+.game-card__titel {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-sm);
+}
+
+.game-card__text {
+    font-size: 1rem;
+    color: var(--color-text);
+    line-height: 1.6;
+    margin: 0 0 var(--spacing-lg);
+}
+
+/* Antwortoptionen (Radio-Buttons) */
+.optionen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    border: 2px solid var(--color-border);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.option:hover {
+    border-color: var(--color-primary);
+    background: rgba(52, 152, 219, 0.04);
+}
+
+/* Markierte Option */
+.option--gewaehlt {
+    border-color: var(--color-primary);
+    background: rgba(52, 152, 219, 0.08);
+}
+
+.option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.option__buchstabe {
+    font-weight: 700;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.option__text {
+    font-size: var(--font-size-body);
+    color: var(--color-text);
+}
+
+/* ============================================================================
+   Reactio-Feedback Overlay (Success / Error)
+   ============================================================================ */
+.feedback-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-lg);
+    z-index: 1000;
+}
+
+.feedback {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xxl);
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    /* 8pt Border laut Akzeptanzkriterien — Farbe wird per JS gesetzt */
+    border: 8px solid var(--color-success);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Großes Icon (110pt laut Akzeptanzkriterien) */
+.feedback__icon {
+    font-size: 110px;
+    line-height: 1;
+    display: block;
+    margin-bottom: var(--spacing-md);
+}
+
+.feedback__titel {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 var(--spacing-sm);
+    color: var(--color-text);
+}
+
+/* Punkte groß und farbig */
+.feedback__punkte {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.feedback__text {
+    font-size: 1rem;
+    color: var(--color-text-light);
+    line-height: 1.6;
+    margin: 0 0 var(--spacing-md);
+}
+
+.feedback__nis2 {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-link);
+    margin: 0 0 var(--spacing-lg);
+}
+
+.feedback .btn {
+    margin-top: var(--spacing-sm);
+}
+
+/* Farb-Varianten (per JS am #feedbackBox gesetzt) */
+.feedback--positiv  { border-color: var(--color-green); }
+.feedback--negativ  { border-color: var(--color-red); }
+.feedback--recovery { border-color: var(--color-orange); }
+.feedback--sackgasse{ border-color: var(--color-muted); }
+
+.feedback--positiv  .feedback__punkte { color: var(--color-green-dark); }
+.feedback--negativ  .feedback__punkte { color: var(--color-red-dark); }
+.feedback--recovery .feedback__punkte { color: var(--color-orange); }
+.feedback--sackgasse .feedback__punkte { color: var(--color-muted); }
+
+.feedback--positiv  .btn { background: var(--color-green); }
+.feedback--negativ  .btn { background: var(--color-red); }
+.feedback--recovery .btn { background: var(--color-orange); }
+.feedback--sackgasse .btn { background: var(--color-muted); }
+
+/* Ende-Screen */
+.feedback--ende { border-color: var(--color-primary); }
+.feedback--ende .feedback__punkte { color: var(--color-primary); }
+
+/* Responsive */
+@media (max-width: 576px) {
+    .game-card { padding: var(--spacing-lg); }
+    .feedback { padding: var(--spacing-xl); }
+    .feedback__icon { font-size: 80px; }
+    .feedback__titel { font-size: 1.5rem; }
+    .feedback__punkte { font-size: 2rem; }
+}

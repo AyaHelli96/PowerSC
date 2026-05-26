@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace NIS2 — Spieler Dashboard</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Spieler-Dashboard-spezifische Styles -->
+    <link rel="stylesheet" href="../css/spieler-dashboard.css">
+</head>
+<body>
+
+    <!-- Header (grün = Spieler-Bereich) -->
+    <header class="dashboard-header dashboard-header--spieler">
+        <h1 class="dashboard-header__title">🎯 VERFÜGBARE SZENARIEN</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--secondary" onclick="abmelden()">
+                🚪 Abmelden
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <!-- Filterleiste (ST-8: Sortierung & Filter) -->
+        <div class="filter-leiste">
+            <input type="text" id="suchfeld" class="form-control search-input"
+                   placeholder="🔍 Szenario suchen..."
+                   oninput="filterAnwenden()">
+
+            <select id="schwierigkeitFilter" class="form-control filter-select"
+                    onchange="filterAnwenden()">
+                <option value="">Alle Schwierigkeiten</option>
+                <option value="Einfach">Einfach</option>
+                <option value="Mittel">Mittel</option>
+                <option value="Schwer">Schwer</option>
+            </select>
+        </div>
+
+        <!-- Karten-Raster (ST-6 Szenario-Auswahl, ST-7 Card Design) -->
+        <div class="szenario-raster" id="szenarioRaster">
+            <!-- Karten werden per JavaScript erzeugt -->
+        </div>
+
+        <!-- Meldung wenn keine Ergebnisse -->
+        <div id="keineErgebnisse" class="keine-ergebnisse" style="display:none;">
+            Keine Szenarien gefunden.
+        </div>
+
+    </main>
+
+    <script src="../js/spieler-dashboard.js"></script>
+</body>
+</html>

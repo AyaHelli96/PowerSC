@@ -1,0 +1,201 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Spieler Dashboard Styles
+ * Sprint 3 | US 3.1.1: Verfügbare Szenarien sehen
+ * SCRUM-140 (Szenario-Auswahl Screen), 141 (Card Design), 142 (Sortierung & Filter)
+ *
+ * Header-Farbe: Grün (Spieler-Bereich) — zur Unterscheidung von Admin (Rot)
+ * und Moderator (Blau)
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Header */
+.dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header--spieler {
+    background-color: var(--color-success);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Main */
+.dashboard-main {
+    padding: var(--spacing-xl);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Filterleiste */
+.filter-leiste {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-xl);
+}
+
+.search-input {
+    max-width: 400px;
+    flex: 1;
+}
+
+.filter-select {
+    max-width: 240px;
+}
+
+/* Karten-Raster */
+.szenario-raster {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Einzelne Szenario-Karte */
+.szenario-karte {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.szenario-karte:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.szenario-karte__kopf {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.szenario-karte__titel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.szenario-karte__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-md);
+    flex: 1;
+}
+
+/* Meta-Infos (Dauer, Phasen, Spieler) */
+.szenario-karte__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+.meta-info {
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+    padding: 0.2rem 0.6rem;
+}
+
+/* Schwierigkeits-Badge */
+.schwierigkeit-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.schwierigkeit-badge--einfach {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: var(--color-success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.schwierigkeit-badge--mittel {
+    background-color: rgba(245, 166, 35, 0.15);
+    color: #CC8800;
+    border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+.schwierigkeit-badge--schwer {
+    background-color: rgba(192, 57, 43, 0.15);
+    color: var(--color-danger);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+}
+
+/* NIS2-Hinweis */
+.nis2-hinweis {
+    font-size: var(--font-size-xs);
+    color: var(--color-link);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Button am Ende der Karte */
+.szenario-karte .btn--block {
+    margin-top: auto;
+}
+
+.btn--success {
+    background: var(--color-success);
+}
+
+.btn--success:hover {
+    background: var(--color-green-dark);
+}
+
+/* Keine Ergebnisse */
+.keine-ergebnisse {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-muted);
+    font-size: var(--font-size-body);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-main {
+        padding: var(--spacing-md);
+    }
+
+    .szenario-raster {
+        grid-template-columns: 1fr;
+    }
+}

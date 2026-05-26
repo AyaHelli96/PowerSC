@@ -1,0 +1,297 @@
+/* ============================================================================
+ * CyberSpace NIS2 — Session-Steuerung Styles
+ * Sprint 3 | US 2.2.1 (Pausieren), 2.2.2 (Beenden), 2.2.3 (Status/Zustandsautomat)
+ *
+ * Header-Farbe: Primary (#3498DB) — Moderator-Bereich
+ * Autorin: Karen Garcia Pinal | HTL Spengergasse Wien 2025/2026
+ * ============================================================================ */
+
+/* Header (gleiche Basis wie Moderator-Dashboard) */
+.dashboard-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.dashboard-header--moderator {
+    background-color: var(--color-primary);
+}
+
+.dashboard-header__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.dashboard-header__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.dashboard-header .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Main */
+.steuerung-main {
+    padding: var(--spacing-xl);
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Info-Card */
+.info-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-card__kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-card__name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.info-card__details {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+}
+
+.info-detail {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background: var(--color-bg);
+    border-radius: var(--border-radius);
+}
+
+.info-detail__label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-detail__wert {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+/* Status Badges — gleiche Logik wie im Dashboard */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge--warten {
+    background-color: rgba(149, 165, 166, 0.15);
+    color: #607071;
+    border: 1px solid rgba(149, 165, 166, 0.3);
+}
+
+.status-badge--aktiv {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: var(--color-success);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+}
+
+.status-badge--pausiert {
+    background-color: rgba(245, 166, 35, 0.15);
+    color: #CC8800;
+    border: 1px solid rgba(245, 166, 35, 0.3);
+}
+
+.status-badge--beendet {
+    background-color: rgba(192, 57, 43, 0.15);
+    color: var(--color-danger);
+    border: 1px solid rgba(192, 57, 43, 0.3);
+}
+
+/* Steuerungs-Buttons */
+.steuerung-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+}
+
+.steuerung-buttons .btn {
+    flex: 1;
+    min-width: 180px;
+}
+
+/* Eigene Button-Farben für die Steuerung */
+.btn--start {
+    background: var(--color-green);
+}
+.btn--start:hover {
+    background: var(--color-green-dark);
+}
+.btn--pause {
+    background: var(--color-orange);
+}
+.btn--pause:hover {
+    background: #D68910;
+}
+
+/* Hinweis bei beendeter Session */
+.beendet-hinweis {
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: var(--color-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-card);
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+
+/* Spielerliste */
+.spieler-card {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+}
+
+.spieler-card__titel {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.spieler-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.spieler-tabelle thead tr {
+    background-color: #2C3E50;
+}
+
+.spieler-tabelle th {
+    padding: var(--spacing-md) var(--spacing-xl);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+.spieler-tabelle tbody tr {
+    border-bottom: 1px solid var(--color-border);
+}
+
+.spieler-tabelle tbody tr:last-child {
+    border-bottom: none;
+}
+
+.spieler-tabelle td {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-body);
+    color: var(--color-text);
+}
+
+/* Rollen-Punkt (farbiger Kreis vor dem Rollennamen) */
+.rollen-punkt {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: var(--spacing-sm);
+    vertical-align: middle;
+}
+
+/* Dialog (gleiche Optik wie Admin-Dashboard) */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.dialog {
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.dialog__titel {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-md);
+}
+
+.dialog__text {
+    color: var(--color-text-light);
+    margin: 0 0 var(--spacing-xl);
+}
+
+.dialog__buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.dialog__buttons .btn {
+    font-size: 0.875rem;
+    padding: 0.5rem 1.25rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .steuerung-main {
+        padding: var(--spacing-md);
+    }
+
+    .info-card__details {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .spieler-tabelle th,
+    .spieler-tabelle td {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+}

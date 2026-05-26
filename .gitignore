@@ -5,3 +5,5 @@ bin/
 bin/ 
 obj/ 
 .idea/ 
+.env
+

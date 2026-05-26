@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session-Steuerung — CyberSpace NIS2</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Session-Steuerung-spezifische Styles -->
+    <link rel="stylesheet" href="../css/session-steuerung.css">
+</head>
+<body>
+
+    <!-- Header (blau = Moderator-Bereich) -->
+    <header class="dashboard-header dashboard-header--moderator">
+        <h1 class="dashboard-header__title">🎮 SESSION-STEUERUNG</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--secondary" onclick="window.location.href='moderator-dashboard.html'">
+                ← Zurück zum Dashboard
+            </button>
+        </div>
+    </header>
+
+    <main class="steuerung-main">
+
+        <!-- Session-Info -->
+        <section class="info-card">
+            <div class="info-card__kopf">
+                <h2 class="info-card__name" id="sessionName">Session wird geladen...</h2>
+                <span class="status-badge" id="statusBadge">—</span>
+            </div>
+            <div class="info-card__details">
+                <div class="info-detail">
+                    <span class="info-detail__label">Szenario</span>
+                    <span class="info-detail__wert" id="szenarioTitel">—</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-detail__label">Aktuelle Phase</span>
+                    <span class="info-detail__wert" id="aktuellePhase">—</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-detail__label">Spieler</span>
+                    <span class="info-detail__wert" id="anzahlSpieler">—</span>
+                </div>
+                <div class="info-detail">
+                    <span class="info-detail__label">Gesamtpunkte</span>
+                    <span class="info-detail__wert" id="gesamtPunkte">—</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Steuerungs-Buttons (US 2.2.1, 2.2.2, 2.2.3 — Zustandsautomat) -->
+        <section class="steuerung-buttons" id="steuerungButtons">
+            <!-- Buttons werden je nach Status per JavaScript eingeblendet -->
+        </section>
+
+        <!-- Spielerliste -->
+        <section class="spieler-card">
+            <h3 class="spieler-card__titel">👥 Spieler in dieser Session</h3>
+            <table class="spieler-tabelle">
+                <thead>
+                    <tr>
+                        <th>Spieler</th>
+                        <th>Rolle</th>
+                        <th>Status</th>
+                        <th>Punkte</th>
+                    </tr>
+                </thead>
+                <tbody id="spielerBody">
+                    <!-- Zeilen werden per JavaScript erzeugt -->
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- Beenden-Bestätigung Dialog -->
+    <div id="beendenDialog" class="dialog-overlay" style="display:none;">
+        <div class="dialog">
+            <h2 class="dialog__titel">Session beenden?</h2>
+            <p class="dialog__text">
+                Die Session wird für alle Spieler beendet. Diese Aktion kann nicht
+                rückgängig gemacht werden.
+            </p>
+            <div class="dialog__buttons">
+                <button class="btn btn--secondary" onclick="dialogSchliessen()">Abbrechen</button>
+                <button class="btn btn--danger" onclick="beendenBestaetigen()">Beenden</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/session-steuerung.js"></script>
+</body>
+</html>
