@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-006: Szenario importieren — CyberSpace NIS2</title>
+
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/formular.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card">
+
+            <!-- Header (rot = Admin-Bereich) -->
+            <div class="formular-card__header">
+                <h1 class="formular-card__title">F-006: SZENARIO IMPORTIEREN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <p class="formular-hinweis">
+                    Lade eine JSON-Datei hoch. Das Szenario wird geprüft und mit
+                    Status <strong>Entwurf</strong> angelegt.
+                </p>
+
+                <form id="importForm" novalidate>
+
+                    <div class="form-group">
+                        <label for="datei">JSON-Datei *</label>
+                        <div class="datei-upload">
+                            📁 Datei auswählen
+                            <br>
+                            <input type="file" id="datei" name="datei" accept=".json">
+                        </div>
+                    </div>
+
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            📥 Importieren
+                        </button>
+                    </div>
+
+                    <!-- Ergebnis (Erfolg oder Fehler) -->
+                    <div id="ergebnis" class="import-ergebnis"></div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/szenario-import.js"></script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace NIS2 — Spielrunde</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Spiel-spezifische Styles -->
+    <link rel="stylesheet" href="../css/spiel.css">
+</head>
+<body>
+
+    <main class="spiel-main">
+
+        <!-- Game-Card (US 3.2.1) -->
+        <section class="game-card" id="gameCard">
+
+            <!-- Kopfzeile: Phase-Indicator + Punkte -->
+            <div class="game-card__kopf">
+                <span class="phase-indicator" id="phaseIndicator">Phase 1/5</span>
+                <span class="punkte-anzeige" id="punkteAnzeige">⭐ 0 Punkte</span>
+            </div>
+
+            <!-- Fortschrittsbalken (Phasen-Fortschritt) -->
+            <div class="progress-bar">
+                <div class="progress-bar__fill" id="progressFill" style="width:0%;"></div>
+            </div>
+
+            <!-- Szenario-Text (Actio) -->
+            <h1 class="game-card__titel" id="kartenTitel">—</h1>
+            <p class="game-card__text" id="kartenText">—</p>
+
+            <!-- 4 Antwortoptionen (A, B, C, D) als Radio-Buttons -->
+            <div class="optionen" id="optionen">
+                <!-- Optionen werden per JavaScript erzeugt -->
+            </div>
+
+            <!-- Bestätigen (erst nach Auswahl aktiv) -->
+            <button class="btn btn--primary btn--block" id="bestaetigenBtn" onclick="bestaetigen()" disabled>
+                Bestätigen
+            </button>
+
+        </section>
+
+    </main>
+
+    <!-- Reactio-Feedback Overlay (Success US 3.2.2 / Error US 3.2.3) -->
+    <div id="feedbackOverlay" class="feedback-overlay" style="display:none;">
+        <div class="feedback" id="feedbackBox">
+            <span class="feedback__icon" id="feedbackIcon">✅</span>
+            <h2 class="feedback__titel" id="feedbackTitel">Richtig!</h2>
+            <div class="feedback__punkte" id="feedbackPunkte">+50 Punkte</div>
+            <p class="feedback__text" id="feedbackText">—</p>
+            <p class="feedback__nis2" id="feedbackNis2" style="display:none;">NIS2: —</p>
+            <button class="btn btn--block" id="weiterBtn" onclick="weiter()">Weiter</button>
+        </div>
+    </div>
+
+    <!-- Ende-Screen (nach letzter Karte) -->
+    <div id="endeOverlay" class="feedback-overlay" style="display:none;">
+        <div class="feedback feedback--ende">
+            <span class="feedback__icon">🏁</span>
+            <h2 class="feedback__titel">Szenario abgeschlossen!</h2>
+            <div class="feedback__punkte" id="endePunkte">0 Punkte</div>
+            <p class="feedback__text">Gut gemacht! Das Ergebnis wird ausgewertet...</p>
+        </div>
+    </div>
+
+    <!-- Sound-Effekte (optional, ST-167) -->
+    <!-- Lege kurze Dateien unter frontend/sounds/ ab: erfolg.mp3 und fehler.mp3 -->
+    <audio id="soundErfolg" src="../sounds/erfolg.mp3" preload="auto"></audio>
+    <audio id="soundFehler" src="../sounds/fehler.mp3" preload="auto"></audio>
+
+    <script src="../js/spiel.js"></script>
+</body>
+</html>

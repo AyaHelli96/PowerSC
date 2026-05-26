@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>F-003: Spielphase definieren — CyberSpace NIS2</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Formular-spezifische Styles -->
+    <link rel="stylesheet" href="../css/formular.css">
+</head>
+<body>
+
+    <div class="formular-container">
+        <div class="formular-card">
+
+            <!-- Header (rot = Admin-Bereich) -->
+            <div class="formular-card__header">
+                <h1 class="formular-card__title">F-003: SPIELPHASE DEFINIEREN</h1>
+            </div>
+
+            <div class="formular-card__body">
+
+                <!-- Meldungen -->
+                <div id="alertSuccess" class="alert alert--success" role="alert">
+                    Phase wurde erfolgreich gespeichert!
+                </div>
+                <div id="alertError" class="alert alert--danger" role="alert">
+                    <span id="alertErrorText">Ein Fehler ist aufgetreten.</span>
+                </div>
+
+                <!-- Formular -->
+                <form id="phaseForm" novalidate>
+
+                    <!-- Szenario (zu welchem Szenario gehört die Phase) -->
+                    <div class="form-group">
+                        <label for="szenario">Szenario *</label>
+                        <select id="szenario" name="szenario" class="form-control" required>
+                            <option value="">Bitte wählen...</option>
+                            <!-- Optionen werden per JavaScript geladen -->
+                        </select>
+                        <div class="invalid-feedback" id="szenarioError">
+                            Bitte wählen Sie ein Szenario.
+                        </div>
+                    </div>
+
+                    <!-- Phasen-Titel -->
+                    <div class="form-group">
+                        <label for="phasenTitel">Phasen-Titel *</label>
+                        <input type="text" id="phasenTitel" name="phasenTitel"
+                               class="form-control"
+                               placeholder="z.B. Erkennung des Angriffs"
+                               required
+                               maxlength="100">
+                        <div class="invalid-feedback" id="titelError">
+                            Bitte geben Sie einen Titel ein (max. 100 Zeichen).
+                        </div>
+
+                        <!-- Phasen-Vorschläge (ST-9) -->
+                        <div class="vorschlaege">
+                            <span class="vorschlaege__label">Vorschläge:</span>
+                            <button type="button" class="vorschlag-chip" onclick="titelUebernehmen('Erkennung')">Erkennung</button>
+                            <button type="button" class="vorschlag-chip" onclick="titelUebernehmen('Eindämmung')">Eindämmung</button>
+                            <button type="button" class="vorschlag-chip" onclick="titelUebernehmen('Meldung (NIS2)')">Meldung (NIS2)</button>
+                            <button type="button" class="vorschlag-chip" onclick="titelUebernehmen('Wiederherstellung')">Wiederherstellung</button>
+                            <button type="button" class="vorschlag-chip" onclick="titelUebernehmen('Nachbereitung')">Nachbereitung</button>
+                        </div>
+                    </div>
+
+                    <!-- Beschreibung -->
+                    <div class="form-group">
+                        <label for="beschreibung">Beschreibung</label>
+                        <textarea id="beschreibung" name="beschreibung"
+                                  class="form-control textarea-control"
+                                  placeholder="Kurze Beschreibung der Phase..."
+                                  maxlength="200"
+                                  rows="3"></textarea>
+                        <div class="invalid-feedback" id="beschreibungError">
+                            Maximal 200 Zeichen.
+                        </div>
+                    </div>
+
+                    <!-- Zwei Spalten: Reihenfolge + Min. Punkte -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reihenfolge">Reihenfolge (1–5) *</label>
+                            <input type="number" id="reihenfolge" name="reihenfolge"
+                                   class="form-control"
+                                   placeholder="z.B. 1"
+                                   required
+                                   min="1"
+                                   max="5">
+                            <div class="invalid-feedback" id="reihenfolgeError">
+                                Bitte geben Sie eine Zahl von 1 bis 5 ein.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="minPunkte">Min. Punkte *</label>
+                            <input type="number" id="minPunkte" name="minPunkte"
+                                   class="form-control"
+                                   placeholder="z.B. 50"
+                                   required
+                                   min="1">
+                            <div class="invalid-feedback" id="minPunkteError">
+                                Min. Punkte müssen größer als 0 sein.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Zeitlimit (optional) -->
+                    <div class="form-group">
+                        <label for="zeitlimit">Zeitlimit in Sekunden (optional)</label>
+                        <input type="number" id="zeitlimit" name="zeitlimit"
+                               class="form-control"
+                               placeholder="z.B. 300"
+                               min="0">
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="formular-buttons">
+                        <button type="button" class="btn btn--secondary"
+                                onclick="window.location.href='admin-dashboard.html'">
+                            Abbrechen
+                        </button>
+                        <button type="submit" class="btn btn--primary" id="submitBtn">
+                            Speichern
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formular-Logik -->
+    <script src="../js/formular-phase.js"></script>
+</body>
+</html>

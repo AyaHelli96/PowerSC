@@ -349,3 +349,167 @@ FROM SessionSpieler ss
          JOIN Szenario sz   ON s.SzenarioID  = sz.SzenarioId
          LEFT JOIN Statstik st ON ss.SpielerId = st.BenutzerId
 WHERE s.Status = 'Beendet';
+
+-- =====================================
+-- View_GameOverAnalyse (US 3.3.2 - ST-4)
+-- =====================================
+-- Zweck: Game Over Statistiken für jeden Spieler anzeigen
+-- Zeigt: Punktzahl, Compliance%, Versuche, Sackgassen, beste Punktzahl
+
+CREATE VIEW View_GameOverAnalyse AS
+SELECT
+    b.BenutzerId,
+    b.Benutzername,
+    b.Email,
+
+    -- Letzte Versuch-Daten
+    s.LetzterVersuch,
+    s.ComplianceProzent AS LetzteCompliance,
+
+    -- Versuchs-Statistiken
+    s.AnzahlVersuche AS GesamtVersuche,
+    s.AnzahlSackgassen,
+    s.AnzahlSiege,
+
+    -- Punkte-Statistiken
+    s.BestePunktzahl,
+    s.GesamtPunkte,
+    ROUND(s.GesamtPunkte / NULLIF(s.GespielteSpiele, 0), 0) AS DurchschnittPunkte,
+
+    -- Erfolgsquote
+    ROUND((s.AnzahlSiege * 100.0) / NULLIF(s.GespielteSpiele, 0), 2) AS Erfolgsquote,
+
+    -- Spiele-Statistiken
+    s.GespielteSpiele,
+
+    -- Verbesserungsbereiche (basierend auf letzter Compliance)
+    CASE
+        WHEN s.ComplianceProzent < 30 THEN 'Kritisch: Grundlagen NIS2 wiederholen'
+        WHEN s.ComplianceProzent < 50 THEN 'Verbesserungsbedarf: Incident Response trainieren'
+        WHEN s.ComplianceProzent < 70 THEN 'Gut: Feinabstimmung bei Compliance-Maßnahmen'
+        WHEN s.ComplianceProzent < 90 THEN 'Sehr gut: Details bei Meldepflichten beachten'
+        ELSE 'Exzellent: NIS2 Compliance erreicht'
+        END AS Verbesserungsbereich,
+
+    -- Status-Indikator
+    CASE
+        WHEN s.ComplianceProzent >= 70 THEN 'Bestanden'
+        ELSE 'Nicht bestanden'
+        END AS Status
+
+FROM Benutzer b
+         JOIN Statstik s ON b.BenutzerId = s.BenutzerId
+WHERE b.Rolle = 'Spieler';
+
+-- -----
+-- Szenario Versionshistorie (US 1.1.2 - ST-3) Sprint 6 
+CREATE VIEW View_SzenarioVersionHistory AS
+SELECT
+    sv.VersionId,
+    sv.SzenarioId,
+    s.Titel AS AktuellerTitel,
+    sv.VersionNummer,
+    sv.Titel AS AlterTitel,
+    sv.Beschreibung AS AlteBeschreibung,
+    sv.Schwierigkeit AS AlteSchwierigkeit,
+    sv.Status AS AlterStatus,
+    b.Benutzername AS GeaendertVon,
+    sv.GeaendertAm,
+    sv.Aenderungsgrund
+FROM SzenarioVersion sv
+         JOIN Szenario s ON sv.SzenarioId = s.SzenarioId
+         JOIN Benutzer b ON sv.GeaendertVon = b.BenutzerID
+ORDER BY sv.SzenarioId, sv.VersionNummer DESC;
+
+-- Import Historie (US 1.5.1 - ST-4)
+CREATE VIEW View_ImportHistory AS
+SELECT
+    il.ImportId,
+    il.DateiName,
+    b.Benutzername AS ImportiertVon,
+    il.ImportZeitpunkt,
+    il.Status,
+    s.Titel AS SzenarioTitel,
+    il.AnzahlKarten,
+    il.AnzahlPhasen,
+    il.AnzahlRollen,
+    il.Fehlermeldung
+FROM ImportLog il
+         JOIN Benutzer b ON il.ImportiertVon = b.BenutzerID
+         LEFT JOIN Szenario s ON il.SzenarioId = s.SzenarioId
+ORDER BY il.ImportZeitpunkt DESC;
+
+-- Export Historie (US 1.5.2 - ST-4)
+CREATE VIEW View_ExportHistory AS
+SELECT
+    el.ExportId,
+    el.DateiName,
+    s.Titel AS SzenarioTitel,
+    b.Benutzername AS ExportiertVon,
+    el.ExportZeitpunkt
+FROM ExportLog el
+         JOIN Szenario s ON el.SzenarioId = s.SzenarioId
+         JOIN Benutzer b ON el.ExportiertVon = b.BenutzerID
+ORDER BY el.ExportZeitpunkt DESC;
+
+-- Benutzer Übersicht (US 0.3.1 - ST-4)
+CREATE VIEW View_BenutzerUebersicht AS
+SELECT
+    BenutzerID,
+    Benutzername,
+    Email,
+    Rolle,
+    RegistriertAm
+FROM Benutzer
+ORDER BY Rolle DESC, Benutzername ASC;
+
+-- Berechtigungs-Log Historie (US 0.3.1 - ST-5)
+CREATE VIEW View_BerechtigungsLog AS
+SELECT
+    bl.LogId,
+    b.Benutzername AS BetroffenerBenutzer,
+    b.Email AS BetroffenerEmail,
+    bl.AlteRolle,
+    bl.NeueRolle,
+    admin.Benutzername AS GeaendertVon,
+    bl.GeaendertAm
+FROM BerechtigungsLog bl
+         JOIN Benutzer b ON bl.BenutzerId = b.BenutzerID
+         JOIN Benutzer admin ON bl.GeaendertVon = admin.BenutzerID
+ORDER BY bl.GeaendertAm DESC;
+
+
+-- Session Details (US 2.1.2 - ST-1)
+CREATE VIEW View_SessionDetails AS
+SELECT
+    s.SessionId,
+    s.SessionName,
+    s.Status AS SessionStatus,
+    s.StartZeit,
+    s.PausierZeit,
+    s.FortsetzungsZeit,
+    sz.Titel AS SzenarioTitel,
+    sz.Schwierigkeit,
+    m.Benutzername AS ModeratorName,
+    COUNT(DISTINCT ss.SpielerId) AS AnzahlSpieler,
+    AVG(ss.Punkte) AS DurchschnittsPunkte
+FROM Session s
+         JOIN Szenario sz ON s.SzenarioId = sz.SzenarioId
+         JOIN Benutzer m ON s.ModeratorId = m.BenutzerID
+         LEFT JOIN SessionSpieler ss ON s.SessionId = ss.SessionId
+GROUP BY s.SessionId, s.SessionName, s.Status, s.StartZeit, s.PausierZeit,
+         s.FortsetzungsZeit, sz.Titel, sz.Schwierigkeit, m.Benutzername;
+
+-- Letzte Aktionen (US 2.1.2 - ST-2)
+CREATE VIEW View_LetzteAktionen AS
+SELECT
+    p.ProtokollId AS AktionId,
+    p.SessionId,
+    p.Zeitstempel,
+    b.Benutzername AS Spieler,
+    p.Aktion AS AktionTyp,
+    p.Details AS AktionDetails,
+    'Protokoll' AS Quelle
+FROM Protokoll p
+         JOIN Benutzer b ON p.BenutzerId = b.BenutzerID
+ORDER BY p.Zeitstempel DESC;

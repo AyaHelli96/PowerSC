@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSpace NIS2 — Moderator Dashboard</title>
+
+    <!-- Design System: gemeinsame Variablen, Farben, Buttons -->
+    <link rel="stylesheet" href="../css/design-system.css">
+
+    <!-- Moderator-Dashboard-spezifische Styles -->
+    <link rel="stylesheet" href="../css/moderator-dashboard.css">
+</head>
+<body>
+
+    <!-- Header (US 2.1.1: Moderator Dashboard) -->
+    <header class="dashboard-header dashboard-header--moderator">
+        <h1 class="dashboard-header__title">🎮 MODERATOR - DASHBOARD</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--primary" id="btnNeueSession" onclick="window.location.href='session-erstellen.html'">
+                ➕ Neue Session
+            </button>
+            <button class="btn btn--secondary" id="btnAbmelden" onclick="abmelden()">
+                🚪 Abmelden
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+
+        <!-- Suchfeld -->
+        <div class="dashboard-search">
+            <input type="text" id="suchfeld" class="form-control search-input"
+                   placeholder="🔍 Sessions suchen..."
+                   oninput="filterTabelle(this.value)">
+        </div>
+
+        <!-- Tabelle: Sessions des Moderators (US 2.1.1) -->
+        <div class="tabelle-container">
+            <table class="szenarien-tabelle" id="sessionTabelle">
+                <thead>
+                    <tr>
+                        <th onclick="sortieren('name')" class="sortierbar">
+                            Session <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortieren('szenario')" class="sortierbar">
+                            Szenario <span class="sort-icon">↕</span>
+                        </th>
+                        <th onclick="sortieren('status')" class="sortierbar">
+                            Status <span class="sort-icon">↕</span>
+                        </th>
+                        <th>Spieler</th>
+                        <th>Aktionen</th>
+                    </tr>
+                </thead>
+                <tbody id="tabellBody">
+                    <!-- Zeilen werden per JavaScript aus den Session-Daten erzeugt -->
+                </tbody>
+            </table>
+
+            <!-- Legende -->
+            <div class="aktionen-legende">
+                Aktionen: ▶️ Öffnen / Steuern &nbsp;|&nbsp; 📋 Spieler einladen
+            </div>
+        </div>
+
+        <!-- Meldung wenn keine Ergebnisse -->
+        <div id="keineErgebnisse" class="keine-ergebnisse" style="display:none;">
+            Keine Sessions gefunden.
+        </div>
+
+    </main>
+
+    <script src="../js/moderator-dashboard.js"></script>
+</body>
+</html>

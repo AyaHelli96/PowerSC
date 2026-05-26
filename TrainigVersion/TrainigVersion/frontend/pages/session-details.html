@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session-Details — CyberSpace NIS2</title>
+
+    <link rel="stylesheet" href="../css/design-system.css">
+    <link rel="stylesheet" href="../css/session-details.css">
+</head>
+<body>
+
+    <!-- Header (blau = Moderator-Bereich) -->
+    <header class="dashboard-header dashboard-header--moderator">
+        <h1 class="dashboard-header__title">📋 SESSION-DETAILS</h1>
+        <div class="dashboard-header__actions">
+            <button class="btn btn--secondary" onclick="window.location.href='moderator-dashboard.html'">
+                ← Zurück zum Dashboard
+            </button>
+        </div>
+    </header>
+
+    <main class="details-main">
+
+        <!-- Session-Info -->
+        <section class="info-card">
+            <h2 class="info-card__name" id="sessionName">—</h2>
+            <p class="info-card__szenario" id="szenarioTitel">—</p>
+
+            <!-- Phasen-Fortschritt -->
+            <div class="fortschritt">
+                <div class="fortschritt__kopf">
+                    <span id="phaseText">Phase 1/5</span>
+                    <span id="prozentText">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-bar__fill" id="progressFill" style="width:0%;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spielerliste -->
+        <section class="liste-card">
+            <h3 class="liste-card__titel">👥 Spieler</h3>
+            <table class="liste-tabelle">
+                <thead>
+                    <tr>
+                        <th>Spieler</th>
+                        <th>Rolle</th>
+                        <th>Punkte</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="spielerBody">
+                    <!-- per JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Letzte Aktionen (Log) -->
+        <section class="liste-card">
+            <h3 class="liste-card__titel">🕑 Letzte 10 Aktionen</h3>
+            <div id="aktionenListe">
+                <!-- per JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <script src="../js/session-details.js"></script>
+</body>
+</html>
