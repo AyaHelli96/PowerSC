@@ -7,7 +7,7 @@ using CyberSpaceNIS2.API.Models;
 namespace CyberSpaceNIS2.API.Controllers;
 
 [ApiController]
-[Route("api/szenario")]
+[Route("api/szenarien")]
 public class SzenarioController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -17,37 +17,29 @@ public class SzenarioController : ControllerBase
         _db = db;
     }
 
-    // POST /api/szenario → Neues Szenario anlegen
     [HttpPost]
     public async Task<IActionResult> CreateSzenario([FromBody] CreateSzenarioRequest request)
     {
-        // Validierung: Titel ist Pflichtfeld
         if (string.IsNullOrWhiteSpace(request.Titel) || request.Titel.Length > 100)
             return BadRequest(new { message = "Titel ist Pflichtfeld (max. 100 Zeichen)." });
 
-        // Validierung: SchwierigkeitsGrad
         var erlaubteGrade = new[] { "Einfach", "Mittel", "Schwer" };
         if (!erlaubteGrade.Contains(request.SchwierigkeitsGrad))
             return BadRequest(new { message = "SchwierigkeitsGrad muss Einfach, Mittel oder Schwer sein." });
 
-        // Validierung: Zielgruppe
         var erlaubteZielgruppen = new[] { "Fuehrungskraefte", "IT-Personal", "Alle" };
         if (!erlaubteZielgruppen.Contains(request.Zielgruppe))
             return BadRequest(new { message = "Zielgruppe muss Fuehrungskraefte, IT-Personal oder Alle sein." });
 
-        // Validierung: Dauer zwischen 15 und 120 Minuten
         if (request.DauerMinuten < 15 || request.DauerMinuten > 120)
             return BadRequest(new { message = "Dauer muss zwischen 15 und 120 Minuten liegen." });
 
-        // Validierung: Phasen zwischen 1 und 10
         if (request.AnzahlPhasen < 1 || request.AnzahlPhasen > 10)
             return BadRequest(new { message = "AnzahlPhasen muss zwischen 1 und 10 liegen." });
 
-        // Validierung: Spieleranzahl
         if (request.MinSpieler < 1 || request.MaxSpieler < request.MinSpieler)
             return BadRequest(new { message = "MinSpieler muss mindestens 1 und MaxSpieler groesser als MinSpieler sein." });
 
-        // Ersteller muss existieren
         var ersteller = await _db.Benutzer.FirstOrDefaultAsync(b => b.BenutzerId == request.ErstelltVon);
         if (ersteller == null)
             return BadRequest(new { message = "Ersteller (ErstelltVon) wurde nicht gefunden." });
@@ -58,7 +50,7 @@ public class SzenarioController : ControllerBase
             Beschreibung = request.Beschreibung,
             SchwierigkeitsGrad = request.SchwierigkeitsGrad,
             Zielgruppe = request.Zielgruppe,
-            Status = "Entwurf",  // Immer als Entwurf starten!
+            Status = "Entwurf",
             MinSpieler = request.MinSpieler,
             MaxSpieler = request.MaxSpieler,
             Nis2Artikel = request.Nis2Artikel,
@@ -70,10 +62,9 @@ public class SzenarioController : ControllerBase
         _db.Szenario.Add(szenario);
         await _db.SaveChangesAsync();
 
-        return Created($"/api/szenario/{szenario.SzenarioId}", MapToResponse(szenario));
+        return Created($"/api/szenarien/{szenario.SzenarioId}", MapToResponse(szenario));
     }
 
-    // GET /api/szenario → Alle Szenarien auflisten
     [HttpGet]
     public async Task<IActionResult> GetAlleSzenarien()
     {
@@ -81,7 +72,6 @@ public class SzenarioController : ControllerBase
         return Ok(szenarien.Select(MapToResponse));
     }
 
-    // GET /api/szenario/aktiv → Nur aktive Szenarien (fuer Spieler)
     [HttpGet("aktiv")]
     public async Task<IActionResult> GetAktiveSzenarien()
     {
@@ -91,7 +81,6 @@ public class SzenarioController : ControllerBase
         return Ok(szenarien.Select(MapToResponse));
     }
 
-    // GET /api/szenario/{id} → Einzelnes Szenario
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSzenario(int id)
     {
@@ -102,7 +91,6 @@ public class SzenarioController : ControllerBase
         return Ok(MapToResponse(szenario));
     }
 
-    // PUT /api/szenario/{id} → Szenario bearbeiten
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateSzenario(int id, [FromBody] UpdateSzenarioRequest request)
     {
@@ -130,7 +118,6 @@ public class SzenarioController : ControllerBase
         return Ok(MapToResponse(szenario));
     }
 
-    // PATCH /api/szenario/{id}/veroeffentlichen → Status auf Aktiv setzen
     [HttpPatch("{id}/veroeffentlichen")]
     public async Task<IActionResult> Veroeffentlichen(int id)
     {
@@ -146,7 +133,6 @@ public class SzenarioController : ControllerBase
         return Ok(MapToResponse(szenario));
     }
 
-    // PATCH /api/szenario/{id}/archivieren → Status auf Archiviert setzen
     [HttpPatch("{id}/archivieren")]
     public async Task<IActionResult> Archivieren(int id)
     {
@@ -159,7 +145,6 @@ public class SzenarioController : ControllerBase
         return Ok(MapToResponse(szenario));
     }
 
-    // DELETE /api/szenario/{id} → Szenario loeschen
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteSzenario(int id)
     {
@@ -175,7 +160,6 @@ public class SzenarioController : ControllerBase
         return Ok(new { message = "Szenario geloescht." });
     }
 
-    // Helper: Model zu Response mappen
     private static SzenarioResponse MapToResponse(Szenario s)
     {
         return new SzenarioResponse

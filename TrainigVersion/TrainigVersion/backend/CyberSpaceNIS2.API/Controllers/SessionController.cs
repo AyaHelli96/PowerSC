@@ -7,7 +7,7 @@ using CyberSpaceNIS2.API.Models;
 namespace CyberSpaceNIS2.API.Controllers;
 
 [ApiController]
-[Route("api/session")]
+[Route("api/sessions")]
 public class SessionController : ControllerBase
 {
     private readonly AppDbContext _db;
@@ -17,18 +17,16 @@ public class SessionController : ControllerBase
         _db = db;
     }
 
-    // POST /api/session → Neue Session erstellen
+    // POST /api/sessions → Neue Session erstellen
     [HttpPost]
     public async Task<IActionResult> CreateSession([FromBody] CreateSessionRequest request)
     {
-        // Szenario muss existieren und aktiv sein
         var szenario = await _db.Szenario.FirstOrDefaultAsync(s => s.SzenarioId == request.SzenarioId);
         if (szenario == null)
             return BadRequest(new { message = "Szenario nicht gefunden." });
         if (szenario.Status != "Aktiv")
             return BadRequest(new { message = "Nur aktive Szenarien koennen gestartet werden." });
 
-        // Moderator muss existieren
         var moderator = await _db.Benutzer.FirstOrDefaultAsync(b => b.BenutzerId == request.ModeratorId);
         if (moderator == null)
             return BadRequest(new { message = "Moderator nicht gefunden." });
@@ -43,10 +41,10 @@ public class SessionController : ControllerBase
         _db.Session.Add(session);
         await _db.SaveChangesAsync();
 
-        return Created($"/api/session/{session.SessionId}", MapToResponse(session));
+        return Created($"/api/sessions/{session.SessionId}", MapToResponse(session));
     }
 
-    // GET /api/session → Alle Sessions auflisten
+    // GET /api/sessions → Alle Sessions auflisten
     [HttpGet]
     public async Task<IActionResult> GetAlleSessions()
     {
@@ -54,7 +52,7 @@ public class SessionController : ControllerBase
         return Ok(sessions.Select(MapToResponse));
     }
 
-    // GET /api/session/aktiv → Nur aktive Sessions (US 2.1.1)
+    // GET /api/sessions/aktiv → Nur aktive Sessions
     [HttpGet("aktiv")]
     public async Task<IActionResult> GetAktiveSessions()
     {
@@ -64,7 +62,15 @@ public class SessionController : ControllerBase
         return Ok(sessions.Select(MapToResponse));
     }
 
-    // GET /api/session/{id} → Einzelne Session
+    // GET /api/sessions/moderator → Sessions fuer Moderator-Dashboard
+    [HttpGet("moderator")]
+    public async Task<IActionResult> GetModeratorSessions()
+    {
+        var sessions = await _db.Session.ToListAsync();
+        return Ok(sessions.Select(MapToResponse));
+    }
+
+    // GET /api/sessions/{id} → Einzelne Session
     [HttpGet("{id}")]
     public async Task<IActionResult> GetSession(int id)
     {
@@ -75,8 +81,30 @@ public class SessionController : ControllerBase
         return Ok(MapToResponse(session));
     }
 
-    // PATCH /api/session/{id}/starten → Spiel starten (US 2.2.3)
-    [HttpPatch("{id}/starten")]
+    // GET /api/sessions/{id}/details → Session-Details
+    [HttpGet("{id}/details")]
+    public async Task<IActionResult> GetSessionDetails(int id)
+    {
+        var session = await _db.Session.FirstOrDefaultAsync(s => s.SessionId == id);
+        if (session == null)
+            return NotFound(new { message = "Session nicht gefunden." });
+
+        var szenario = await _db.Szenario.FirstOrDefaultAsync(s => s.SzenarioId == session.SzenarioId);
+
+        return Ok(new
+        {
+            sessionId = session.SessionId,
+            szenarioTitel = szenario?.Titel ?? "Unbekannt",
+            schwierigkeitsGrad = szenario?.SchwierigkeitsGrad ?? "",
+            status = session.Status,
+            startZeit = session.StartZeit,
+            endZeit = session.EndZeit,
+            erstelltAm = session.ErstelltAm
+        });
+    }
+
+    // POST /api/sessions/{id}/start → Spiel starten
+    [HttpPost("{id}/start")]
     public async Task<IActionResult> SessionStarten(int id)
     {
         var session = await _db.Session.FirstOrDefaultAsync(s => s.SessionId == id);
@@ -93,8 +121,8 @@ public class SessionController : ControllerBase
         return Ok(MapToResponse(session));
     }
 
-    // PATCH /api/session/{id}/pausieren → Spiel pausieren (US 2.2.1)
-    [HttpPatch("{id}/pausieren")]
+    // POST /api/sessions/{id}/pause → Spiel pausieren
+    [HttpPost("{id}/pause")]
     public async Task<IActionResult> SessionPausieren(int id)
     {
         var session = await _db.Session.FirstOrDefaultAsync(s => s.SessionId == id);
@@ -110,8 +138,22 @@ public class SessionController : ControllerBase
         return Ok(MapToResponse(session));
     }
 
-    // PATCH /api/session/{id}/beenden → Spiel beenden (US 2.2.2)
-    [HttpPatch("{id}/beenden")]
+    // POST /api/sessions/{id}/resume → Spiel fortsetzen
+    [HttpPost("{id}/resume")]
+    public async Task<IActionResult> SessionFortsetzen(int id)
+    {
+        var session = await _db.Session.FirstOrDefaultAsync(s => s.SessionId == id);
+        if (session == null)
+            return NotFound(new { message = "Session nicht gefunden." });
+
+        session.Status = "Laufend";
+        await _db.SaveChangesAsync();
+
+        return Ok(MapToResponse(session));
+    }
+
+    // POST /api/sessions/{id}/end → Spiel beenden
+    [HttpPost("{id}/end")]
     public async Task<IActionResult> SessionBeenden(int id)
     {
         var session = await _db.Session.FirstOrDefaultAsync(s => s.SessionId == id);
@@ -128,7 +170,7 @@ public class SessionController : ControllerBase
         return Ok(MapToResponse(session));
     }
 
-    // PATCH /api/session/{id}/abbrechen → Spiel abbrechen
+    // PATCH /api/sessions/{id}/abbrechen → Spiel abbrechen
     [HttpPatch("{id}/abbrechen")]
     public async Task<IActionResult> SessionAbbrechen(int id)
     {
@@ -146,7 +188,7 @@ public class SessionController : ControllerBase
         return Ok(MapToResponse(session));
     }
 
-    // GET /api/session/{id}/ergebnis → Spielergebnis (US 3.3.1 + US 3.3.2)
+    // GET /api/sessions/{id}/ergebnis → Spielergebnis
     [HttpGet("{id}/ergebnis")]
     public async Task<IActionResult> GetErgebnis(int id)
     {

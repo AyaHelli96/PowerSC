@@ -12,6 +12,8 @@ public class AppDbContext : DbContext
     public DbSet<Option> Option { get; set; }
     public DbSet<Szenario> Szenario { get; set; }
     public DbSet<SpielSession> Session { get; set; }
+    public DbSet<Phase> Phase { get; set; }
+    public DbSet<Rolle> Rollen { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,5 +56,20 @@ public class AppDbContext : DbContext
             entity.ToTable("Session");
             entity.HasKey(e => e.SessionId);
         });
+        modelBuilder.Entity<Phase>(entity =>
+        {
+            entity.ToTable("Phase");
+            entity.HasKey(e => e.PhaseId);
+        });
+
+        modelBuilder.Entity<Rolle>(entity =>
+        {
+            entity.ToTable("Rollen");
+            entity.HasKey(e => e.RolleId);
+        });
+        
+        
     }
+    
+    
 }
